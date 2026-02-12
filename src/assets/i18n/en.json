@@ -1,0 +1,93 @@
+{
+  "app": {
+    "title": "Expense Tracker"
+  },
+  "nav": {
+    "myExpenses": "My Expenses",
+    "reports": "Reports",
+    "new": "New",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout"
+  },
+  "home": {
+    "welcome": "Welcome",
+    "welcomeGuest": "Welcome to Expense Tracker",
+    "pleaseLogin": "Please login to continue.",
+    "email": "Email"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "confirmPassword": "Confirm Password",
+    "loggingIn": "Logging in...",
+    "registering": "Registering...",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?"
+  },
+  "expenses": {
+    "title": "My Expenses",
+    "new": "New Expense",
+    "edit": "Edit Expense",
+    "noExpenses": "No expenses yet. Create your first one!",
+    "total": "Total",
+    "loading": "Loading...",
+    "allTime": "All time",
+    "edit_btn": "Edit",
+    "delete": "Delete",
+    "page": "Page",
+    "of": "of",
+    "items": "items",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "expenseForm": {
+    "description": "Description",
+    "amount": "Amount",
+    "date": "Date",
+    "category": "Category",
+    "selectCategory": "Select a category",
+    "notes": "Notes (optional)",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "fillRequired": "Please fill all required fields",
+    "failedSave": "Failed to save expense",
+    "failedLoad": "Failed to load expense",
+    "failedCategories": "Failed to load categories"
+  },
+  "deleteModal": {
+    "title": "Delete Expense",
+    "message": "Are you sure you want to delete '{{name}}'?",
+    "confirm": "Delete",
+    "cancel": "Cancel"
+  },
+  "reports": {
+    "title": "Reports",
+    "noData": "No data for this period"
+  },
+  "errors": {
+    "loadExpenses": "Failed to load expenses",
+    "deleteExpense": "Failed to delete expense"
+  },
+  "categories": {
+    "Food & Dining": "Food & Dining",
+    "Transportation": "Transportation",
+    "Housing": "Housing",
+    "Entertainment": "Entertainment",
+    "Shopping": "Shopping",
+    "Healthcare": "Healthcare",
+    "Utilities": "Utilities",
+    "Taxes": "Taxes",
+    "Services": "Services",
+    "Subscriptions": "Subscriptions",
+    "Credit Card": "Credit Card",
+    "Nafta": "Gas",
+    "Comida": "Food",
+    "Other": "Other"
+  }
+}

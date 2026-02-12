@@ -1,0 +1,2 @@
+# Crear Static Web App
+az staticwebapp create --name expense-tracker-web --resource-group expense-tracker-rg --source https://github.com/hdepaul/ExpenseTracker --location eastus2 --branch main --app-location "/angular/test1/expense-tracker-app" --output-location "dist/expense-tracker-app/browser" --login-with-github

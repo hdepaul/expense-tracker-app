@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "expense-tracker-app",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -29,6 +29,10 @@
     "@angular/forms": "^21.1.0",
     "@angular/platform-browser": "^21.1.0",
     "@angular/router": "^21.1.0",
+    "@ngx-translate/core": "^17.0.0",
+    "@ngx-translate/http-loader": "^16.0.1",
+    "chart.js": "^4.5.1",
+    "ng2-charts": "^8.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

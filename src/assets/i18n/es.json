@@ -1,0 +1,93 @@
+{
+  "app": {
+    "title": "Control de Gastos"
+  },
+  "nav": {
+    "myExpenses": "Mis Gastos",
+    "reports": "Reportes",
+    "new": "Nuevo",
+    "login": "Ingresar",
+    "register": "Registrarse",
+    "logout": "Salir"
+  },
+  "home": {
+    "welcome": "Bienvenido",
+    "welcomeGuest": "Bienvenido a Control de Gastos",
+    "pleaseLogin": "Por favor ingresá para continuar.",
+    "email": "Email"
+  },
+  "auth": {
+    "login": "Ingresar",
+    "register": "Registrarse",
+    "email": "Email",
+    "password": "Contraseña",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "confirmPassword": "Confirmar Contraseña",
+    "loggingIn": "Ingresando...",
+    "registering": "Registrando...",
+    "noAccount": "¿No tenés cuenta?",
+    "hasAccount": "¿Ya tenés cuenta?"
+  },
+  "expenses": {
+    "title": "Mis Gastos",
+    "new": "Nuevo Gasto",
+    "edit": "Editar Gasto",
+    "noExpenses": "No hay gastos todavía. ¡Creá el primero!",
+    "total": "Total",
+    "loading": "Cargando...",
+    "allTime": "Todo el tiempo",
+    "edit_btn": "Editar",
+    "delete": "Eliminar",
+    "page": "Página",
+    "of": "de",
+    "items": "items",
+    "previous": "Anterior",
+    "next": "Siguiente"
+  },
+  "expenseForm": {
+    "description": "Descripción",
+    "amount": "Monto",
+    "date": "Fecha",
+    "category": "Categoría",
+    "selectCategory": "Seleccioná una categoría",
+    "notes": "Notas (opcional)",
+    "save": "Guardar",
+    "saving": "Guardando...",
+    "cancel": "Cancelar",
+    "fillRequired": "Por favor completá todos los campos requeridos",
+    "failedSave": "Error al guardar el gasto",
+    "failedLoad": "Error al cargar el gasto",
+    "failedCategories": "Error al cargar las categorías"
+  },
+  "deleteModal": {
+    "title": "Eliminar Gasto",
+    "message": "¿Estás seguro de eliminar '{{name}}'?",
+    "confirm": "Eliminar",
+    "cancel": "Cancelar"
+  },
+  "reports": {
+    "title": "Reportes",
+    "noData": "No hay datos para este período"
+  },
+  "errors": {
+    "loadExpenses": "Error al cargar los gastos",
+    "deleteExpense": "Error al eliminar el gasto"
+  },
+  "categories": {
+    "Food & Dining": "Comida y Restaurantes",
+    "Transportation": "Transporte",
+    "Housing": "Vivienda",
+    "Entertainment": "Entretenimiento",
+    "Shopping": "Compras",
+    "Healthcare": "Salud",
+    "Utilities": "Servicios Públicos",
+    "Taxes": "Impuestos",
+    "Services": "Servicios",
+    "Subscriptions": "Suscripciones",
+    "Credit Card": "Tarjeta de Crédito",
+    "Nafta": "Nafta",
+    "Comida": "Comida",
+    "Other": "Otros"
+  }
+}
