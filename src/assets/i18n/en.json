@@ -70,6 +70,14 @@
     "title": "Reports",
     "noData": "No data for this period"
   },
+  "ai": {
+    "placeholder": "E.g.: I spent $500 on gas yesterday...",
+    "send": "Send",
+    "processing": "Thinking...",
+    "error": "Error processing. Try again.",
+    "clear": "Clear chat",
+    "rateLimited": "Daily limit reached. Try again tomorrow."
+  },
   "errors": {
     "loadExpenses": "Failed to load expenses",
     "deleteExpense": "Failed to delete expense"

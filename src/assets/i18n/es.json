@@ -70,6 +70,14 @@
     "title": "Reportes",
     "noData": "No hay datos para este período"
   },
+  "ai": {
+    "placeholder": "Ej: Gasté $500 en nafta ayer...",
+    "send": "Enviar",
+    "processing": "Pensando...",
+    "error": "Error al procesar. Intentá de nuevo.",
+    "clear": "Limpiar chat",
+    "rateLimited": "Límite diario alcanzado. Intentá mañana."
+  },
   "errors": {
     "loadExpenses": "Error al cargar los gastos",
     "deleteExpense": "Error al eliminar el gasto"

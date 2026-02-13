@@ -50,3 +50,20 @@ export interface ExpenseListResult {
   totalAmount: number;
   byCategory: CategorySummary[];
 }
+
+// AI Chat
+export interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export interface ChatRequest {
+  message: string;
+  history: ChatMessage[];
+}
+
+export interface ChatResponse {
+  type: 'expense_created' | 'message';
+  message: string;
+  expenseId?: string;
+}

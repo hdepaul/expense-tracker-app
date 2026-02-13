@@ -1,10 +1,11 @@
-import { Component, inject, signal, OnInit, computed } from '@angular/core';
+import { Component, inject, signal, OnInit, computed, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { DatePipe, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ExpenseService } from '../../services/expense.service';
-import { Expense, CategorySummary } from '../../models/expense.model';
+import { AIService } from '../../services/ai.service';
+import { Expense, CategorySummary, ChatMessage } from '../../models/expense.model';
 import { ConfirmModalComponent } from '../../components/confirm-modal.component';
 
 @Component({
@@ -13,6 +14,46 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
   imports: [RouterLink, DatePipe, CurrencyPipe, FormsModule, TranslateModule, ConfirmModalComponent],
   template: `
     <div class="expenses-container">
+
+      <!-- AI Mini-Chat -->
+      <div class="ai-chat">
+        @if (chatMessages().length > 0) {
+          <div class="chat-messages" #chatMessagesContainer>
+            @for (msg of chatMessages(); track $index) {
+              <div class="chat-bubble" [class.user]="msg.role === 'user'" [class.assistant]="msg.role === 'assistant'">
+                {{ msg.content }}
+              </div>
+            }
+            @if (aiLoading()) {
+              <div class="chat-bubble assistant loading-bubble">
+                <span class="dot-typing"></span>
+              </div>
+            }
+          </div>
+          <button class="btn-clear-chat" (click)="clearChat()" [title]="'ai.clear' | translate">✕</button>
+        }
+        <div class="chat-input-bar">
+          <input
+            type="text"
+            [(ngModel)]="chatInput"
+            (keydown.enter)="sendMessage()"
+            [placeholder]="'ai.placeholder' | translate"
+            [disabled]="aiLoading()"
+            class="chat-input"
+          />
+          <button
+            (click)="sendMessage()"
+            [disabled]="aiLoading() || !chatInput.trim()"
+            class="btn-send">
+            @if (aiLoading()) {
+              {{ 'ai.processing' | translate }}
+            } @else {
+              {{ 'ai.send' | translate }}
+            }
+          </button>
+        </div>
+      </div>
+
       <div class="header">
         <h2>{{ 'expenses.title' | translate }}</h2>
         <div class="header-actions">
@@ -114,6 +155,134 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       margin: 30px auto;
       padding: 20px;
     }
+
+    /* AI Chat */
+    .ai-chat {
+      background: #f8f9fa;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .chat-messages {
+      max-height: 220px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding-right: 24px;
+    }
+    .chat-bubble {
+      padding: 10px 14px;
+      border-radius: 16px;
+      max-width: 80%;
+      word-wrap: break-word;
+      font-size: 0.95em;
+      line-height: 1.4;
+    }
+    .chat-bubble.user {
+      align-self: flex-end;
+      background: #007bff;
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+    .chat-bubble.assistant {
+      align-self: flex-start;
+      background: #ffffff;
+      color: #333;
+      border: 1px solid #e0e0e0;
+      border-bottom-left-radius: 4px;
+    }
+    .loading-bubble {
+      padding: 14px 20px;
+    }
+    .dot-typing {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #999;
+      animation: dotTyping 1.4s infinite;
+      position: relative;
+    }
+    .dot-typing::before,
+    .dot-typing::after {
+      content: '';
+      display: inline-block;
+      position: absolute;
+      top: 0;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #999;
+    }
+    .dot-typing::before {
+      left: -10px;
+      animation: dotTyping 1.4s infinite 0.2s;
+    }
+    .dot-typing::after {
+      left: 10px;
+      animation: dotTyping 1.4s infinite 0.4s;
+    }
+    @keyframes dotTyping {
+      0%, 80%, 100% { opacity: 0.3; }
+      40% { opacity: 1; }
+    }
+    .btn-clear-chat {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: none;
+      border: none;
+      font-size: 1.1em;
+      color: #999;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 50%;
+    }
+    .btn-clear-chat:hover {
+      background: #e0e0e0;
+      color: #333;
+    }
+    .chat-input-bar {
+      display: flex;
+      gap: 8px;
+    }
+    .chat-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid #ddd;
+      border-radius: 24px;
+      font-size: 0.95em;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .chat-input:focus {
+      border-color: #007bff;
+    }
+    .chat-input:disabled {
+      background: #f0f0f0;
+    }
+    .btn-send {
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 24px;
+      cursor: pointer;
+      font-size: 0.9em;
+      white-space: nowrap;
+    }
+    .btn-send:disabled {
+      background: #b0c4de;
+      cursor: not-allowed;
+    }
+    .btn-send:not(:disabled):hover {
+      background: #0056b3;
+    }
+
     .header {
       display: flex;
       justify-content: space-between;
@@ -341,13 +510,25 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       .btn-page {
         width: 100%;
       }
+      .ai-chat {
+        padding: 12px;
+      }
+      .chat-bubble {
+        max-width: 90%;
+      }
+      .btn-send {
+        padding: 10px 14px;
+      }
     }
   `]
 })
-export class ExpenseListComponent implements OnInit {
+export class ExpenseListComponent implements OnInit, AfterViewChecked {
   private expenseService = inject(ExpenseService);
+  private aiService = inject(AIService);
   private route = inject(ActivatedRoute);
   private translate = inject(TranslateService);
+
+  @ViewChild('chatMessagesContainer') chatMessagesContainer?: ElementRef<HTMLDivElement>;
 
   expenses = signal<Expense[]>([]);
   loading = signal(true);
@@ -375,6 +556,12 @@ export class ExpenseListComponent implements OnInit {
   selectedMonth = '';
   availableMonths = this.generateMonths();
 
+  // AI Chat
+  chatMessages = signal<ChatMessage[]>([]);
+  aiLoading = signal(false);
+  chatInput = '';
+  private shouldScrollChat = false;
+
   ngOnInit(): void {
     const page = this.route.snapshot.queryParamMap.get('page');
     if (page) {
@@ -383,6 +570,63 @@ export class ExpenseListComponent implements OnInit {
     this.loadExpenses();
   }
 
+  ngAfterViewChecked(): void {
+    if (this.shouldScrollChat) {
+      this.scrollChatToBottom();
+      this.shouldScrollChat = false;
+    }
+  }
+
+  // AI Chat methods
+  sendMessage(): void {
+    const message = this.chatInput.trim();
+    if (!message || this.aiLoading()) return;
+
+    // Add user message to chat
+    this.chatMessages.update(msgs => [...msgs, { role: 'user' as const, content: message }]);
+    this.chatInput = '';
+    this.aiLoading.set(true);
+    this.shouldScrollChat = true;
+
+    // Build history (all messages except the current one)
+    const history = this.chatMessages().slice(0, -1);
+
+    this.aiService.chat(message, history).subscribe({
+      next: (response) => {
+        this.chatMessages.update(msgs => [...msgs, { role: 'assistant' as const, content: response.message }]);
+        this.aiLoading.set(false);
+        this.shouldScrollChat = true;
+
+        if (response.type === 'expense_created') {
+          // Refresh expense list and clear chat after a short delay
+          this.loadExpenses();
+          setTimeout(() => this.clearChat(), 3000);
+        }
+      },
+      error: () => {
+        this.chatMessages.update(msgs => [
+          ...msgs,
+          { role: 'assistant' as const, content: this.translate.instant('ai.error') },
+        ]);
+        this.aiLoading.set(false);
+        this.shouldScrollChat = true;
+      },
+    });
+  }
+
+  clearChat(): void {
+    this.chatMessages.set([]);
+    this.chatInput = '';
+  }
+
+  private scrollChatToBottom(): void {
+    const el = this.chatMessagesContainer?.nativeElement;
+    if (el) {
+      el.scrollTop = el.scrollHeight;
+    }
+  }
+
+  // Existing methods
   loadExpenses(): void {
     this.loading.set(true);
 
