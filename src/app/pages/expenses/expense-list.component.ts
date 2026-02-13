@@ -80,14 +80,12 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
 
       <div class="header">
         <h2>{{ 'expenses.title' | translate }}</h2>
-        <div class="header-actions">
-          <select [(ngModel)]="selectedMonth" (change)="onMonthChange()" class="month-filter">
-            <option value="">{{ 'expenses.allTime' | translate }}</option>
-            @for (month of availableMonths; track month.value) {
-              <option [value]="month.value">{{ month.label }}</option>
-            }
-          </select>
-          <a routerLink="/expenses/new" class="btn-add">+ {{ 'nav.new' | translate }}</a>
+        <div class="month-nav">
+          <button class="btn-month-arrow" (click)="prevMonth()" [title]="'expenses.previous' | translate">&#8249;</button>
+          <button class="btn-month-label" (click)="toggleAllTime()">
+            {{ currentMonthLabel() }}
+          </button>
+          <button class="btn-month-arrow" (click)="nextMonth()" [disabled]="!canGoNextMonth()" [title]="'expenses.next' | translate">&#8250;</button>
         </div>
       </div>
 
@@ -134,8 +132,8 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
               {{ expense.amount | currency:'USD' }}
             </div>
             <div class="expense-actions">
-              <a [routerLink]="['/expenses', expense.id, 'edit']" [queryParams]="{page: currentPage()}" class="btn-edit">{{ 'expenses.edit_btn' | translate }}</a>
-              <button (click)="delete(expense)" class="btn-delete">{{ 'expenses.delete' | translate }}</button>
+              <a [routerLink]="['/expenses', expense.id, 'edit']" [queryParams]="{page: currentPage()}" class="btn-icon" [title]="'expenses.edit_btn' | translate">✏️</a>
+              <button (click)="delete(expense)" class="btn-icon btn-icon-delete" [title]="'expenses.delete' | translate">🗑️</button>
             </div>
           </div>
         }
@@ -393,23 +391,50 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       align-items: center;
       margin-bottom: 20px;
     }
-    .header-actions {
+    .month-nav {
       display: flex;
-      gap: 10px;
       align-items: center;
+      gap: 4px;
     }
-    .month-filter {
-      padding: 8px 12px;
+    .btn-month-arrow {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
       border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 0.9em;
+      background: white;
+      font-size: 1.3em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #333;
+      transition: all 0.2s;
     }
-    .btn-add {
-      background: #28a745;
+    .btn-month-arrow:hover:not(:disabled) {
+      background: #007bff;
       color: white;
-      padding: 10px 20px;
-      text-decoration: none;
-      border-radius: 4px;
+      border-color: #007bff;
+    }
+    .btn-month-arrow:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+    .btn-month-label {
+      padding: 8px 16px;
+      border: 1px solid #ddd;
+      border-radius: 20px;
+      background: white;
+      font-size: 0.9em;
+      font-weight: 500;
+      cursor: pointer;
+      color: #333;
+      min-width: 140px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .btn-month-label:hover {
+      border-color: #007bff;
+      color: #007bff;
     }
     .expense-list {
       display: flex;
@@ -448,22 +473,27 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
     }
     .expense-actions {
       display: flex;
-      gap: 10px;
+      gap: 6px;
     }
-    .btn-edit {
-      background: #007bff;
-      color: white;
-      padding: 5px 15px;
-      text-decoration: none;
-      border-radius: 4px;
-    }
-    .btn-delete {
-      background: #dc3545;
-      color: white;
-      padding: 5px 15px;
+    .btn-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
       border: none;
-      border-radius: 4px;
+      background: #f0f0f0;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1em;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn-icon:hover {
+      background: #e0e0e0;
+    }
+    .btn-icon-delete:hover {
+      background: #fee2e2;
     }
     .error {
       color: #dc3545;
@@ -558,39 +588,36 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       .header {
         flex-direction: column;
         align-items: stretch;
-        gap: 15px;
+        gap: 12px;
       }
       .header h2 {
         margin: 0;
         text-align: center;
       }
-      .header-actions {
-        flex-direction: column;
-      }
-      .month-filter {
-        width: 100%;
-      }
-      .btn-add {
-        text-align: center;
+      .month-nav {
+        justify-content: center;
       }
       .expense-card {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .expense-info {
+        flex: 1;
+        min-width: 0;
       }
       .expense-info h3 {
-        font-size: 1em;
+        font-size: 0.95em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       .expense-amount {
         margin-right: 0;
-        font-size: 1.2em;
+        font-size: 1.1em;
       }
       .expense-actions {
-        justify-content: stretch;
-      }
-      .btn-edit, .btn-delete {
-        flex: 1;
-        text-align: center;
+        gap: 8px;
       }
       .summary {
         padding: 15px;
@@ -670,7 +697,9 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
 
   // Month filter
   selectedMonth = '';
-  availableMonths = this.generateMonths();
+  private filterYear = new Date().getFullYear();
+  private filterMonth = new Date().getMonth(); // 0-indexed
+  private showAllTime = false;
 
   // AI Chat
   chatMessages = signal<ChatMessage[]>([]);
@@ -697,6 +726,8 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
     if (page) {
       this.currentPage.set(parseInt(page, 10));
     }
+    // Start showing current month
+    this.selectedMonth = `${this.filterYear}-${this.filterMonth + 1}`;
     this.loadExpenses();
   }
 
@@ -820,23 +851,60 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
     });
   }
 
-  onMonthChange(): void {
-    this.currentPage.set(1);
-    this.loadExpenses();
-  }
-
-  private generateMonths(): { value: string; label: string }[] {
-    const months = [];
-    const now = new Date();
+  currentMonthLabel(): string {
+    if (this.showAllTime) {
+      return this.translate.instant('expenses.allTime');
+    }
     const lang = this.translate.currentLang || 'en';
     const locale = lang === 'es' ? 'es-AR' : 'en-US';
-    for (let i = 0; i < 12; i++) {
-      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const value = `${date.getFullYear()}-${date.getMonth() + 1}`;
-      const label = date.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
-      months.push({ value, label: label.charAt(0).toUpperCase() + label.slice(1) });
+    const date = new Date(this.filterYear, this.filterMonth, 1);
+    const label = date.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
+    return label.charAt(0).toUpperCase() + label.slice(1);
+  }
+
+  canGoNextMonth(): boolean {
+    const now = new Date();
+    return this.showAllTime || this.filterYear < now.getFullYear() ||
+      (this.filterYear === now.getFullYear() && this.filterMonth < now.getMonth());
+  }
+
+  prevMonth(): void {
+    if (this.showAllTime) {
+      this.showAllTime = false;
+    } else {
+      this.filterMonth--;
+      if (this.filterMonth < 0) {
+        this.filterMonth = 11;
+        this.filterYear--;
+      }
     }
-    return months;
+    this.updateSelectedMonth();
+  }
+
+  nextMonth(): void {
+    if (!this.canGoNextMonth()) return;
+    this.filterMonth++;
+    if (this.filterMonth > 11) {
+      this.filterMonth = 0;
+      this.filterYear++;
+    }
+    this.updateSelectedMonth();
+  }
+
+  toggleAllTime(): void {
+    this.showAllTime = !this.showAllTime;
+    if (!this.showAllTime) {
+      const now = new Date();
+      this.filterYear = now.getFullYear();
+      this.filterMonth = now.getMonth();
+    }
+    this.updateSelectedMonth();
+  }
+
+  private updateSelectedMonth(): void {
+    this.selectedMonth = this.showAllTime ? '' : `${this.filterYear}-${this.filterMonth + 1}`;
+    this.currentPage.set(1);
+    this.loadExpenses();
   }
 
   goToPage(page: number): void {
