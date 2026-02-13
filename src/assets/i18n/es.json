@@ -99,6 +99,7 @@
     "voice": "Dictar gasto por voz",
     "listening": "Escuchando...",
     "stopListening": "Dejar de escuchar",
+    "listen": "Escuchar respuesta",
     "welcomeMessage": "Decime qué gastaste y lo registro por vos. Podés escribir o usar el micrófono.",
     "chip1": "Gasté $500 en nafta",
     "chip2": "Pagué $1500 de luz",

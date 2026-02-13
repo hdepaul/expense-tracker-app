@@ -22,6 +22,11 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
             @for (msg of chatMessages(); track $index) {
               <div class="chat-bubble" [class.user]="msg.role === 'user'" [class.assistant]="msg.role === 'assistant'">
                 {{ msg.content }}
+                @if (msg.role === 'assistant' && ttsSupported) {
+                  <button class="btn-speak" (click)="speak(msg.content)" [title]="'ai.listen' | translate">
+                    {{ isSpeaking() === msg.content ? '⏹' : '🔊' }}
+                  </button>
+                }
               </div>
             }
             @if (aiLoading()) {
@@ -216,6 +221,20 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       color: #333;
       border: 1px solid #e0e0e0;
       border-bottom-left-radius: 4px;
+    }
+    .btn-speak {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85em;
+      padding: 2px 4px;
+      margin-left: 6px;
+      opacity: 0.5;
+      transition: opacity 0.2s;
+      vertical-align: middle;
+    }
+    .btn-speak:hover {
+      opacity: 1;
     }
     .loading-bubble {
       padding: 14px 20px;
@@ -707,10 +726,14 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
   chatInput = '';
   private shouldScrollChat = false;
 
-  // Voice
+  // Voice input
   speechSupported = 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
   isRecording = signal(false);
   private recognition: any = null;
+
+  // Text-to-speech
+  ttsSupported = 'speechSynthesis' in window;
+  isSpeaking = signal<string | null>(null);
 
   // Example chips (translated via getter)
   get exampleChips(): string[] {
@@ -805,6 +828,21 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
     this.recognition.onend = () => this.isRecording.set(false);
 
     this.recognition.start();
+  }
+
+  speak(text: string): void {
+    if (this.isSpeaking() === text) {
+      speechSynthesis.cancel();
+      this.isSpeaking.set(null);
+      return;
+    }
+    speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = this.translate.currentLang === 'es' ? 'es-AR' : 'en-US';
+    utterance.onend = () => this.isSpeaking.set(null);
+    utterance.onerror = () => this.isSpeaking.set(null);
+    this.isSpeaking.set(text);
+    speechSynthesis.speak(utterance);
   }
 
   clearChat(): void {
