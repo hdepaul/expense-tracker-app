@@ -102,7 +102,7 @@
     "welcomeMessage": "Decime qué gastaste y lo registro por vos. Podés escribir o usar el micrófono.",
     "chip1": "Gasté $500 en nafta",
     "chip2": "Pagué $1500 de luz",
-    "chip3": "Almorcé $3000 hoy"
+    "chip3": "¿Cuánto gasté esta semana?"
   },
   "errors": {
     "loadExpenses": "Error al cargar los gastos",

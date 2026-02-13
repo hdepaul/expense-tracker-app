@@ -102,7 +102,7 @@
     "welcomeMessage": "Tell me what you spent and I'll record it for you. You can type or use the microphone.",
     "chip1": "Spent $500 on gas",
     "chip2": "Paid $1500 for electricity",
-    "chip3": "Had lunch for $3000 today"
+    "chip3": "How much did I spend this week?"
   },
   "errors": {
     "loadExpenses": "Failed to load expenses",
