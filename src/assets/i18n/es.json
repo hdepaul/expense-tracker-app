@@ -118,7 +118,8 @@
     "deleteExpense": "Error al eliminar el gasto"
   },
   "categories": {
-    "Food & Dining": "Comida y Restaurantes",
+    "Restaurants & Bars": "Restaurantes y Bares",
+    "Groceries": "Supermercado",
     "Transportation": "Transporte",
     "Housing": "Vivienda",
     "Entertainment": "Entretenimiento",
@@ -130,7 +131,6 @@
     "Subscriptions": "Suscripciones",
     "Credit Card": "Tarjeta de Crédito",
     "Nafta": "Nafta",
-    "Comida": "Comida",
     "Other": "Otros"
   }
 }

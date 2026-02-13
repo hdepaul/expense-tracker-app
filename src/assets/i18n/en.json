@@ -118,7 +118,8 @@
     "deleteExpense": "Failed to delete expense"
   },
   "categories": {
-    "Food & Dining": "Food & Dining",
+    "Restaurants & Bars": "Restaurants & Bars",
+    "Groceries": "Groceries",
     "Transportation": "Transportation",
     "Housing": "Housing",
     "Entertainment": "Entertainment",
@@ -130,7 +131,6 @@
     "Subscriptions": "Subscriptions",
     "Credit Card": "Credit Card",
     "Nafta": "Gas",
-    "Comida": "Food",
     "Other": "Other"
   }
 }
