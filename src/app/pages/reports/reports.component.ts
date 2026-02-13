@@ -1,5 +1,4 @@
 import { Component, inject, signal, OnInit, ViewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
@@ -10,17 +9,18 @@ import { CategorySummary } from '../../models/expense.model';
 @Component({
   selector: 'app-reports',
   standalone: true,
-  imports: [FormsModule, CurrencyPipe, BaseChartDirective, TranslateModule],
+  imports: [CurrencyPipe, BaseChartDirective, TranslateModule],
   template: `
     <div class="reports-container">
       <div class="header">
         <h2>{{ 'reports.title' | translate }}</h2>
-        <select [(ngModel)]="selectedMonth" (change)="onMonthChange()" class="month-filter">
-          <option value="">{{ 'expenses.allTime' | translate }}</option>
-          @for (month of availableMonths; track month.value) {
-            <option [value]="month.value">{{ month.label }}</option>
-          }
-        </select>
+        <div class="month-nav">
+          <button class="btn-month-arrow" (click)="prevMonth()" [title]="'expenses.previous' | translate">&#8249;</button>
+          <button class="btn-month-label" (click)="toggleAllTime()">
+            {{ currentMonthLabel() }}
+          </button>
+          <button class="btn-month-arrow" (click)="nextMonth()" [disabled]="!canGoNextMonth()" [title]="'expenses.next' | translate">&#8250;</button>
+        </div>
       </div>
 
       @if (loading()) {
@@ -74,11 +74,50 @@ import { CategorySummary } from '../../models/expense.model';
       align-items: center;
       margin-bottom: 30px;
     }
-    .month-filter {
-      padding: 10px 15px;
+    .month-nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-month-arrow {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
       border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 1em;
+      background: white;
+      font-size: 1.3em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #333;
+      transition: all 0.2s;
+    }
+    .btn-month-arrow:hover:not(:disabled) {
+      background: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+    .btn-month-arrow:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+    .btn-month-label {
+      padding: 8px 16px;
+      border: 1px solid #ddd;
+      border-radius: 20px;
+      background: white;
+      font-size: 0.9em;
+      font-weight: 500;
+      cursor: pointer;
+      color: #333;
+      min-width: 140px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .btn-month-label:hover {
+      border-color: #007bff;
+      color: #007bff;
     }
     .chart-section {
       display: grid;
@@ -168,8 +207,8 @@ import { CategorySummary } from '../../models/expense.model';
         margin: 0;
         text-align: center;
       }
-      .month-filter {
-        width: 100%;
+      .month-nav {
+        justify-content: center;
       }
       .chart-section {
         grid-template-columns: 1fr;
@@ -210,8 +249,9 @@ export class ReportsComponent implements OnInit {
   totalAmount = signal(0);
   byCategory = signal<CategorySummary[]>([]);
 
-  selectedMonth = '';
-  availableMonths = this.generateMonths();
+  private filterYear = new Date().getFullYear();
+  private filterMonth = new Date().getMonth();
+  private showAllTime = false;
 
   private categoryColors: Record<string, string> = {
     'Restaurants': '#FF6384',
@@ -262,8 +302,9 @@ export class ReportsComponent implements OnInit {
     let fromDate: string | undefined;
     let toDate: string | undefined;
 
-    if (this.selectedMonth) {
-      const [year, month] = this.selectedMonth.split('-').map(Number);
+    if (!this.showAllTime) {
+      const year = this.filterYear;
+      const month = this.filterMonth + 1;
       fromDate = `${year}-${String(month).padStart(2, '0')}-01`;
       const lastDay = new Date(year, month, 0).getDate();
       toDate = `${year}-${String(month).padStart(2, '0')}-${lastDay}`;
@@ -302,7 +343,53 @@ export class ReportsComponent implements OnInit {
     this.chart?.update();
   }
 
-  onMonthChange(): void {
+  currentMonthLabel(): string {
+    if (this.showAllTime) {
+      return this.translate.instant('expenses.allTime');
+    }
+    const lang = this.translate.currentLang || 'en';
+    const locale = lang === 'es' ? 'es-AR' : 'en-US';
+    const date = new Date(this.filterYear, this.filterMonth, 1);
+    const label = date.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
+    return label.charAt(0).toUpperCase() + label.slice(1);
+  }
+
+  canGoNextMonth(): boolean {
+    const now = new Date();
+    return this.showAllTime || this.filterYear < now.getFullYear() ||
+      (this.filterYear === now.getFullYear() && this.filterMonth < now.getMonth());
+  }
+
+  prevMonth(): void {
+    if (this.showAllTime) {
+      this.showAllTime = false;
+    } else {
+      this.filterMonth--;
+      if (this.filterMonth < 0) {
+        this.filterMonth = 11;
+        this.filterYear--;
+      }
+    }
+    this.loadData();
+  }
+
+  nextMonth(): void {
+    if (!this.canGoNextMonth()) return;
+    this.filterMonth++;
+    if (this.filterMonth > 11) {
+      this.filterMonth = 0;
+      this.filterYear++;
+    }
+    this.loadData();
+  }
+
+  toggleAllTime(): void {
+    this.showAllTime = !this.showAllTime;
+    if (!this.showAllTime) {
+      const now = new Date();
+      this.filterYear = now.getFullYear();
+      this.filterMonth = now.getMonth();
+    }
     this.loadData();
   }
 
@@ -314,19 +401,5 @@ export class ReportsComponent implements OnInit {
     const total = this.totalAmount();
     if (total === 0) return '0';
     return ((amount / total) * 100).toFixed(1);
-  }
-
-  private generateMonths(): { value: string; label: string }[] {
-    const months = [];
-    const now = new Date();
-    const lang = this.translate.currentLang || 'en';
-    const locale = lang === 'es' ? 'es-AR' : 'en-US';
-    for (let i = 0; i < 12; i++) {
-      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const value = `${date.getFullYear()}-${date.getMonth() + 1}`;
-      const label = date.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
-      months.push({ value, label: label.charAt(0).toUpperCase() + label.slice(1) });
-    }
-    return months;
   }
 }
