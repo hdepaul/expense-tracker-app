@@ -6,6 +6,8 @@ import { ExpenseListComponent } from './pages/expenses/expense-list.component';
 import { ExpenseFormComponent } from './pages/expenses/expense-form.component';
 import { ReportsComponent } from './pages/reports/reports.component';
 import { authGuard } from './guards/auth.guard';
+import { adminGuard } from './guards/admin.guard';
+import { AdminUsersComponent } from './pages/admin/admin-users.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -30,6 +32,11 @@ export const routes: Routes = [
     path: 'reports',
     component: ReportsComponent,
     canActivate: [authGuard]
+  },
+  {
+    path: 'admin',
+    component: AdminUsersComponent,
+    canActivate: [adminGuard]
   },
   { path: '**', redirectTo: '' }
 ];

@@ -8,7 +8,8 @@
     "new": "Nuevo",
     "login": "Ingresar",
     "register": "Registrarse",
-    "logout": "Salir"
+    "logout": "Salir",
+    "admin": "Admin"
   },
   "home": {
     "welcome": "Bienvenido",
@@ -103,6 +104,14 @@
     "chip1": "Gasté $500 en nafta",
     "chip2": "Pagué $1500 de luz",
     "chip3": "¿Cuánto gasté esta semana?"
+  },
+  "admin": {
+    "title": "Gestión de Usuarios",
+    "totalUsers": "Total de usuarios",
+    "registered": "Registrado",
+    "aiMessages": "Mensajes AI",
+    "noUsers": "No se encontraron usuarios",
+    "loading": "Cargando..."
   },
   "errors": {
     "loadExpenses": "Error al cargar los gastos",

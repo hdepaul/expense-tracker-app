@@ -17,6 +17,7 @@ export class AuthService {
   // Computed
   isLoggedIn = computed(() => !!this.currentUserSignal());
   currentUser = computed(() => this.currentUserSignal());
+  isAdmin = computed(() => this.currentUserSignal()?.role === 'Admin');
 
   login(request: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request).pipe(

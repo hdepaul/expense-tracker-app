@@ -22,6 +22,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         router.navigate(['/login']);
+      } else if (error.status === 403) {
+        router.navigate(['/expenses']);
       }
       return throwError(() => error);
     })

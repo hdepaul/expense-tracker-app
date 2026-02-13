@@ -16,4 +16,5 @@ export interface AuthResponse {
   firstName: string;
   lastName: string;
   expiresAt: string;
+  role: string;
 }

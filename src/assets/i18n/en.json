@@ -8,7 +8,8 @@
     "new": "New",
     "login": "Login",
     "register": "Register",
-    "logout": "Logout"
+    "logout": "Logout",
+    "admin": "Admin"
   },
   "home": {
     "welcome": "Welcome",
@@ -103,6 +104,14 @@
     "chip1": "Spent $500 on gas",
     "chip2": "Paid $1500 for electricity",
     "chip3": "How much did I spend this week?"
+  },
+  "admin": {
+    "title": "User Management",
+    "totalUsers": "Total users",
+    "registered": "Registered",
+    "aiMessages": "AI Messages",
+    "noUsers": "No users found",
+    "loading": "Loading..."
   },
   "errors": {
     "loadExpenses": "Failed to load expenses",
