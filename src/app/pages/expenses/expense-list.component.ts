@@ -334,9 +334,9 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       width: 42px;
       height: 42px;
       border-radius: 50%;
-      border: none;
-      background: #f0f0f0;
-      color: #666;
+      border: 2px solid #007bff;
+      background: #e8f0fe;
+      color: #007bff;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -346,8 +346,8 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       transition: all 0.2s;
     }
     .btn-mic:hover {
-      background: #e0e0e0;
-      color: #333;
+      background: #007bff;
+      color: white;
     }
     .btn-mic.recording {
       background: #dc3545;
