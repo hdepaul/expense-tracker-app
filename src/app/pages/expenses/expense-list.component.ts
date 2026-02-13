@@ -763,7 +763,7 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
         if (response.type === 'expense_created') {
           // Refresh expense list and clear chat after a short delay
           this.loadExpenses();
-          setTimeout(() => this.clearChat(), 3000);
+          setTimeout(() => this.clearChat(), 5000);
         }
       },
       error: () => {
@@ -812,6 +812,7 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
   clearChat(): void {
     this.chatMessages.set([]);
     this.chatInput = '';
+    this.aiLoading.set(false);
   }
 
   private scrollChatToBottom(): void {

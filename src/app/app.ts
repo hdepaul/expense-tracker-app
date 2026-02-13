@@ -21,5 +21,10 @@ export class App {
 
     this.translate.setDefaultLang('es');
     this.translate.use(defaultLang);
+    document.documentElement.lang = defaultLang;
+
+    this.translate.onLangChange.subscribe(event => {
+      document.documentElement.lang = event.lang;
+    });
   }
 }
