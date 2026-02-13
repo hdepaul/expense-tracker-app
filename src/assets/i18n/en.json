@@ -29,6 +29,7 @@
   },
   "auth": {
     "login": "Login",
+    "loginSubtitle": "Track your expenses with AI. Type or dictate what you spent and you're done.",
     "register": "Register",
     "email": "Email",
     "password": "Password",

@@ -29,6 +29,7 @@
   },
   "auth": {
     "login": "Ingresar",
+    "loginSubtitle": "Controlá tus gastos con inteligencia artificial. Escribí o dictá lo que gastaste y listo.",
     "register": "Registrarse",
     "email": "Email",
     "password": "Contraseña",

@@ -11,6 +11,7 @@ import { AuthService } from '../../services/auth.service';
   template: `
     <div class="login-container">
       <h2>{{ 'auth.login' | translate }}</h2>
+      <p class="login-subtitle">{{ 'auth.loginSubtitle' | translate }}</p>
 
       @if (error()) {
         <div class="error">{{ error() }}</div>
@@ -59,6 +60,13 @@ import { AuthService } from '../../services/auth.service';
       max-width: 400px;
       margin: 50px auto;
       padding: 20px;
+    }
+    .login-subtitle {
+      text-align: center;
+      color: #666;
+      font-size: 0.95em;
+      margin-bottom: 24px;
+      line-height: 1.5;
     }
     .form-group {
       margin-bottom: 15px;
