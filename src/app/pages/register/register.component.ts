@@ -24,7 +24,11 @@ import { AuthService } from '../../services/auth.service';
             id="firstName"
             [(ngModel)]="firstName"
             name="firstName"
-            required>
+            required
+            maxlength="100">
+          @if (firstName.length >= 100) {
+            <span class="field-error">{{ 'auth.maxLength' | translate:{ max: 100 } }}</span>
+          }
         </div>
 
         <div class="form-group">
@@ -34,7 +38,11 @@ import { AuthService } from '../../services/auth.service';
             id="lastName"
             [(ngModel)]="lastName"
             name="lastName"
-            required>
+            required
+            maxlength="100">
+          @if (lastName.length >= 100) {
+            <span class="field-error">{{ 'auth.maxLength' | translate:{ max: 100 } }}</span>
+          }
         </div>
 
         <div class="form-group">
@@ -45,6 +53,9 @@ import { AuthService } from '../../services/auth.service';
             [(ngModel)]="email"
             name="email"
             required>
+          @if (email && !isValidEmail()) {
+            <span class="field-error">{{ 'auth.invalidEmail' | translate }}</span>
+          }
         </div>
 
         <div class="form-group">
@@ -197,10 +208,12 @@ export class RegisterComponent {
   hasUppercase(): boolean { return /[A-Z]/.test(this.password); }
   hasLowercase(): boolean { return /[a-z]/.test(this.password); }
   hasNumber(): boolean { return /[0-9]/.test(this.password); }
+  isValidEmail(): boolean { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email); }
 
   isFormValid(): boolean {
     return !!(
-      this.firstName && this.lastName && this.email &&
+      this.firstName && this.lastName &&
+      this.email && this.isValidEmail() &&
       this.password.length >= 8 &&
       /[A-Z]/.test(this.password) &&
       /[a-z]/.test(this.password) &&

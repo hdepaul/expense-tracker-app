@@ -32,7 +32,9 @@
     "pwUppercase": "Una letra mayúscula",
     "pwLowercase": "Una letra minúscula",
     "pwNumber": "Un número",
-    "passwordMismatch": "Las contraseñas no coinciden"
+    "passwordMismatch": "Las contraseñas no coinciden",
+    "invalidEmail": "Ingresá un email válido",
+    "maxLength": "Máximo {{max}} caracteres"
   },
   "expenses": {
     "title": "Mis Gastos",

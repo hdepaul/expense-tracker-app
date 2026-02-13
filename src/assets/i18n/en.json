@@ -32,7 +32,9 @@
     "pwUppercase": "One uppercase letter",
     "pwLowercase": "One lowercase letter",
     "pwNumber": "One number",
-    "passwordMismatch": "Passwords do not match"
+    "passwordMismatch": "Passwords do not match",
+    "invalidEmail": "Enter a valid email address",
+    "maxLength": "Maximum {{max}} characters"
   },
   "expenses": {
     "title": "My Expenses",
