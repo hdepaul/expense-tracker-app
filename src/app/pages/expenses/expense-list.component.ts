@@ -62,12 +62,7 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
               @if (isRecording()) {
                 <span class="mic-pulse"></span>
               }
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                <line x1="12" y1="19" x2="12" y2="23"/>
-                <line x1="8" y1="23" x2="16" y2="23"/>
-              </svg>
+              <span class="mic-icon">🎙</span>
             </button>
           }
           <button
@@ -336,7 +331,6 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       border-radius: 50%;
       border: 2px solid #007bff;
       background: white;
-      color: #007bff;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -345,22 +339,16 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       position: relative;
       transition: all 0.2s;
     }
-    .btn-mic svg {
-      stroke: #007bff;
-      transition: stroke 0.2s;
+    .mic-icon {
+      font-size: 1.2em;
+      line-height: 1;
     }
     .btn-mic:hover {
-      background: #007bff;
-    }
-    .btn-mic:hover svg {
-      stroke: white;
-    }
-    .btn-mic.recording svg {
-      stroke: white;
+      background: #e8f0fe;
     }
     .btn-mic.recording {
       background: #dc3545;
-      color: white;
+      border-color: #dc3545;
     }
     .btn-mic:disabled {
       opacity: 0.5;
