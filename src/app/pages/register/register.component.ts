@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -55,10 +55,29 @@ import { AuthService } from '../../services/auth.service';
             [(ngModel)]="password"
             name="password"
             required
-            minlength="6">
+            minlength="8">
+          <ul class="password-hints">
+            <li [class.valid]="password.length >= 8">{{ 'auth.pwMin8' | translate }}</li>
+            <li [class.valid]="hasUppercase()">{{ 'auth.pwUppercase' | translate }}</li>
+            <li [class.valid]="hasLowercase()">{{ 'auth.pwLowercase' | translate }}</li>
+            <li [class.valid]="hasNumber()">{{ 'auth.pwNumber' | translate }}</li>
+          </ul>
         </div>
 
-        <button type="submit" [disabled]="loading()">
+        <div class="form-group">
+          <label for="confirmPassword">{{ 'auth.confirmPassword' | translate }}</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            [(ngModel)]="confirmPassword"
+            name="confirmPassword"
+            required>
+          @if (confirmPassword && password !== confirmPassword) {
+            <span class="field-error">{{ 'auth.passwordMismatch' | translate }}</span>
+          }
+        </div>
+
+        <button type="submit" [disabled]="loading() || !isFormValid()">
           {{ loading() ? ('auth.registering' | translate) : ('auth.register' | translate) }}
         </button>
       </form>
@@ -102,6 +121,34 @@ import { AuthService } from '../../services/auth.service';
       margin-bottom: 15px;
       border-radius: 4px;
     }
+    .password-hints {
+      list-style: none;
+      padding: 0;
+      margin: 8px 0 0 0;
+      font-size: 0.82em;
+    }
+    .password-hints li {
+      color: #999;
+      padding: 2px 0;
+      transition: color 0.2s;
+    }
+    .password-hints li::before {
+      content: '✕ ';
+      color: #dc3545;
+    }
+    .password-hints li.valid {
+      color: #28a745;
+    }
+    .password-hints li.valid::before {
+      content: '✓ ';
+      color: #28a745;
+    }
+    .field-error {
+      color: #dc3545;
+      font-size: 0.85em;
+      margin-top: 4px;
+      display: block;
+    }
     p {
       text-align: center;
       margin-top: 20px;
@@ -143,8 +190,24 @@ export class RegisterComponent {
   lastName = '';
   email = '';
   password = '';
+  confirmPassword = '';
   loading = signal(false);
   error = signal('');
+
+  hasUppercase(): boolean { return /[A-Z]/.test(this.password); }
+  hasLowercase(): boolean { return /[a-z]/.test(this.password); }
+  hasNumber(): boolean { return /[0-9]/.test(this.password); }
+
+  isFormValid(): boolean {
+    return !!(
+      this.firstName && this.lastName && this.email &&
+      this.password.length >= 8 &&
+      /[A-Z]/.test(this.password) &&
+      /[a-z]/.test(this.password) &&
+      /[0-9]/.test(this.password) &&
+      this.password === this.confirmPassword
+    );
+  }
 
   onSubmit(): void {
     this.loading.set(true);

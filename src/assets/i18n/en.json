@@ -27,7 +27,12 @@
     "loggingIn": "Logging in...",
     "registering": "Registering...",
     "noAccount": "Don't have an account?",
-    "hasAccount": "Already have an account?"
+    "hasAccount": "Already have an account?",
+    "pwMin8": "At least 8 characters",
+    "pwUppercase": "One uppercase letter",
+    "pwLowercase": "One lowercase letter",
+    "pwNumber": "One number",
+    "passwordMismatch": "Passwords do not match"
   },
   "expenses": {
     "title": "My Expenses",

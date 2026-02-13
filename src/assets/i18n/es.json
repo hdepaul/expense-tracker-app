@@ -27,7 +27,12 @@
     "loggingIn": "Ingresando...",
     "registering": "Registrando...",
     "noAccount": "¿No tenés cuenta?",
-    "hasAccount": "¿Ya tenés cuenta?"
+    "hasAccount": "¿Ya tenés cuenta?",
+    "pwMin8": "Mínimo 8 caracteres",
+    "pwUppercase": "Una letra mayúscula",
+    "pwLowercase": "Una letra minúscula",
+    "pwNumber": "Un número",
+    "passwordMismatch": "Las contraseñas no coinciden"
   },
   "expenses": {
     "title": "Mis Gastos",
