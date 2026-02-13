@@ -17,9 +17,9 @@ export class App {
     // Detect browser language and set default
     const browserLang = this.translate.getBrowserLang();
     const supportedLangs = ['en', 'es'];
-    const defaultLang = supportedLangs.includes(browserLang || '') ? browserLang! : 'en';
+    const defaultLang = supportedLangs.includes(browserLang || '') ? browserLang! : 'es';
 
-    this.translate.setDefaultLang('en');
+    this.translate.setDefaultLang('es');
     this.translate.use(defaultLang);
   }
 }
