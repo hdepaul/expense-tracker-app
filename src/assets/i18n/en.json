@@ -99,7 +99,6 @@
     "voice": "Dictate expense by voice",
     "listening": "Listening...",
     "stopListening": "Stop listening",
-    "listen": "Listen to response",
     "welcomeMessage": "Tell me what you spent and I'll record it for you. You can type or use the microphone.",
     "chip1": "Spent $500 on gas",
     "chip2": "Paid $1500 for electricity",
