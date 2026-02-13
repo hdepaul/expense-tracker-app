@@ -51,6 +51,11 @@ export interface ExpenseListResult {
   byCategory: CategorySummary[];
 }
 
+// Budget
+export interface Budget {
+  amount: number;
+}
+
 // AI Chat
 export interface ChatMessage {
   role: 'user' | 'assistant';

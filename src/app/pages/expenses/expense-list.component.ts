@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ExpenseService } from '../../services/expense.service';
 import { AIService } from '../../services/ai.service';
+import { BudgetService } from '../../services/budget.service';
 import { Expense, CategorySummary, ChatMessage } from '../../models/expense.model';
 import { ConfirmModalComponent } from '../../components/confirm-modal.component';
 
@@ -104,14 +105,69 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       @if (!loading() && expenses().length > 0) {
         <div class="summary">
           <div class="total-card">
-            <span class="total-label">{{ 'expenses.total' | translate }}</span>
-            <span class="total-amount">{{ totalAmount() | currency:'USD' }}</span>
+            <div class="total-row">
+              <span class="total-label">{{ 'expenses.total' | translate }}</span>
+              <span class="total-amount">{{ totalAmount() | currency:'USD' }}</span>
+            </div>
+            @if (comparisonText()) {
+              <span class="comparison-badge" [class.up]="comparisonPercent() > 0" [class.down]="comparisonPercent() < 0" [class.same]="comparisonPercent() === 0">
+                {{ comparisonText() }}
+              </span>
+            }
           </div>
+
+          @if (!showAllTime) {
+            <div class="budget-section">
+              @if (budgetAmount() !== null) {
+                <div class="budget-bar-container">
+                  <div class="budget-info">
+                    <span class="budget-text">{{ totalAmount() | currency:'USD' }} {{ 'budget.of' | translate }} {{ budgetAmount() | currency:'USD' }} ({{ budgetPercent() }}%)</span>
+                    <span class="budget-actions-inline">
+                      <button class="btn-budget-action" (click)="startEditBudget()" title="✏️">✏️</button>
+                      <button class="btn-budget-action" (click)="removeBudget()" [title]="'budget.remove' | translate">✕</button>
+                    </span>
+                  </div>
+                  <div class="budget-bar">
+                    <div class="budget-bar-fill" [style.width.%]="Math.min(budgetPercent(), 100)"
+                      [class.green]="budgetPercent() < 60"
+                      [class.yellow]="budgetPercent() >= 60 && budgetPercent() < 80"
+                      [class.orange]="budgetPercent() >= 80 && budgetPercent() <= 100"
+                      [class.red]="budgetPercent() > 100">
+                    </div>
+                  </div>
+                  <span class="budget-status" [class.exceeded]="totalAmount() > budgetAmount()!">
+                    @if (totalAmount() > budgetAmount()!) {
+                      {{ 'budget.exceeded' | translate:{ amount: (totalAmount() - budgetAmount()! | currency:'USD') } }}
+                    } @else {
+                      {{ 'budget.remaining' | translate:{ amount: (budgetAmount()! - totalAmount() | currency:'USD') } }}
+                    }
+                  </span>
+                </div>
+              } @else if (!editingBudget()) {
+                <button class="btn-set-budget" (click)="startEditBudget()">{{ 'budget.set' | translate }}</button>
+              }
+              @if (editingBudget()) {
+                <div class="budget-edit-inline">
+                  <input type="number" [(ngModel)]="budgetInput" min="1" step="100" class="budget-input" (keydown.enter)="saveBudget()" />
+                  <button class="btn-budget-save" (click)="saveBudget()" [disabled]="!budgetInput || budgetInput <= 0">{{ 'budget.save' | translate }}</button>
+                  <button class="btn-budget-cancel" (click)="cancelEditBudget()">✕</button>
+                </div>
+              }
+            </div>
+          }
+
           <div class="category-breakdown">
             @for (cat of byCategory(); track cat.categoryName) {
               <div class="category-item">
                 <span class="category-name">{{ 'categories.' + cat.categoryName | translate }}</span>
-                <span class="category-amount">{{ cat.amount | currency:'USD' }}</span>
+                <div class="category-right">
+                  <span class="category-amount">{{ cat.amount | currency:'USD' }}</span>
+                  @if (getCategoryComparison(cat.categoryName); as comp) {
+                    <span class="category-comparison" [class.up]="comp.direction === 'up'" [class.down]="comp.direction === 'down'">
+                      {{ comp.direction === 'up' ? '↑' : comp.direction === 'down' ? '↓' : '' }}
+                    </span>
+                  }
+                </div>
               </div>
             }
           </div>
@@ -515,11 +571,16 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
     }
     .total-card {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      gap: 6px;
       padding-bottom: 15px;
       border-bottom: 2px solid #dee2e6;
       margin-bottom: 15px;
+    }
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     .total-label {
       font-size: 1.2em;
@@ -530,6 +591,139 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       font-size: 1.5em;
       font-weight: bold;
       color: #dc3545;
+    }
+    .comparison-badge {
+      font-size: 0.85em;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 12px;
+      align-self: flex-end;
+    }
+    .comparison-badge.up {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+    .comparison-badge.down {
+      background: #dcfce7;
+      color: #16a34a;
+    }
+    .comparison-badge.same {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+    .budget-section {
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .budget-bar-container {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .budget-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .budget-text {
+      font-size: 0.9em;
+      color: #555;
+    }
+    .budget-actions-inline {
+      display: flex;
+      gap: 4px;
+    }
+    .btn-budget-action {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85em;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #888;
+    }
+    .btn-budget-action:hover {
+      background: #e5e7eb;
+      color: #333;
+    }
+    .budget-bar {
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .budget-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+    .budget-bar-fill.green { background: #22c55e; }
+    .budget-bar-fill.yellow { background: #eab308; }
+    .budget-bar-fill.orange { background: #f97316; }
+    .budget-bar-fill.red { background: #ef4444; }
+    .budget-status {
+      font-size: 0.8em;
+      color: #16a34a;
+    }
+    .budget-status.exceeded {
+      color: #dc2626;
+    }
+    .btn-set-budget {
+      background: none;
+      border: 1px dashed #aaa;
+      color: #666;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9em;
+      width: 100%;
+      transition: all 0.2s;
+    }
+    .btn-set-budget:hover {
+      border-color: #007bff;
+      color: #007bff;
+    }
+    .budget-edit-inline {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 8px;
+    }
+    .budget-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.95em;
+      outline: none;
+    }
+    .budget-input:focus {
+      border-color: #007bff;
+    }
+    .btn-budget-save {
+      padding: 8px 16px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+    .btn-budget-save:disabled {
+      background: #b0c4de;
+      cursor: not-allowed;
+    }
+    .btn-budget-cancel {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #999;
+      font-size: 1.1em;
+      padding: 4px 8px;
+    }
+    .btn-budget-cancel:hover {
+      color: #333;
     }
     .category-breakdown {
       display: grid;
@@ -547,10 +741,21 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
     .category-name {
       color: #666;
     }
+    .category-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
     .category-amount {
       font-weight: 600;
       color: #333;
     }
+    .category-comparison {
+      font-size: 0.8em;
+      font-weight: 600;
+    }
+    .category-comparison.up { color: #dc2626; }
+    .category-comparison.down { color: #16a34a; }
     .pagination {
       display: flex;
       justify-content: center;
@@ -624,9 +829,15 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
         padding: 15px;
       }
       .total-card {
-        flex-direction: column;
         gap: 5px;
         text-align: center;
+      }
+      .total-row {
+        flex-direction: column;
+        gap: 5px;
+      }
+      .comparison-badge {
+        align-self: center;
       }
       .category-breakdown {
         grid-template-columns: 1fr;
@@ -667,8 +878,10 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
   `]
 })
 export class ExpenseListComponent implements OnInit, AfterViewChecked {
+  Math = Math;
   private expenseService = inject(ExpenseService);
   private aiService = inject(AIService);
+  private budgetService = inject(BudgetService);
   private route = inject(ActivatedRoute);
   private translate = inject(TranslateService);
 
@@ -700,7 +913,24 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
   selectedMonth = '';
   private filterYear = new Date().getFullYear();
   private filterMonth = new Date().getMonth(); // 0-indexed
-  private showAllTime = false;
+  showAllTime = false;
+
+  // Comparison with previous month
+  previousMonthTotal = signal<number | null>(null);
+  previousByCategory = signal<CategorySummary[]>([]);
+  comparisonPercent = signal<number>(0);
+  comparisonText = signal<string>('');
+
+  // Budget
+  budgetAmount = signal<number | null>(null);
+  editingBudget = signal(false);
+  budgetInput: number = 0;
+
+  budgetPercent(): number {
+    const budget = this.budgetAmount();
+    if (!budget || budget === 0) return 0;
+    return Math.round((this.totalAmount() / budget) * 100);
+  }
 
   // AI Chat
   chatMessages = signal<ChatMessage[]>([]);
@@ -731,6 +961,7 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
     // Start showing current month
     this.selectedMonth = `${this.filterYear}-${this.filterMonth + 1}`;
     this.loadExpenses();
+    this.loadBudget();
   }
 
   ngAfterViewChecked(): void {
@@ -846,10 +1077,115 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
         this.totalAmount.set(result.totalAmount);
         this.byCategory.set(result.byCategory);
         this.loading.set(false);
+
+        // Load previous month for comparison
+        if (this.selectedMonth) {
+          this.loadPreviousMonth();
+        } else {
+          this.previousMonthTotal.set(null);
+          this.previousByCategory.set([]);
+          this.comparisonText.set('');
+        }
       },
       error: () => {
         this.error.set(this.translate.instant('errors.loadExpenses'));
         this.loading.set(false);
+      }
+    });
+  }
+
+  private loadPreviousMonth(): void {
+    const [year, month] = this.selectedMonth.split('-').map(Number);
+    let prevYear = year;
+    let prevMonth = month - 1;
+    if (prevMonth < 1) { prevMonth = 12; prevYear--; }
+
+    const prevFromDate = `${prevYear}-${String(prevMonth).padStart(2, '0')}-01`;
+    const lastDay = new Date(prevYear, prevMonth, 0).getDate();
+    const prevToDate = `${prevYear}-${String(prevMonth).padStart(2, '0')}-${lastDay}`;
+
+    this.expenseService.getExpenses(1, 1, prevFromDate, prevToDate).subscribe({
+      next: (result) => {
+        this.previousMonthTotal.set(result.totalAmount);
+        this.previousByCategory.set(result.byCategory);
+        this.updateComparison(result.totalAmount);
+      },
+      error: () => {
+        this.previousMonthTotal.set(null);
+        this.comparisonText.set('');
+      }
+    });
+  }
+
+  private updateComparison(prevTotal: number): void {
+    const current = this.totalAmount();
+    if (prevTotal === 0 && current === 0) {
+      this.comparisonPercent.set(0);
+      this.comparisonText.set(this.translate.instant('comparison.noData'));
+      return;
+    }
+    if (prevTotal === 0) {
+      this.comparisonPercent.set(0);
+      this.comparisonText.set(this.translate.instant('comparison.noData'));
+      return;
+    }
+    const diff = ((current - prevTotal) / prevTotal) * 100;
+    const percent = Math.abs(Math.round(diff));
+    this.comparisonPercent.set(diff);
+
+    if (diff > 0) {
+      this.comparisonText.set(this.translate.instant('comparison.more', { percent }));
+    } else if (diff < 0) {
+      this.comparisonText.set(this.translate.instant('comparison.less', { percent }));
+    } else {
+      this.comparisonText.set(this.translate.instant('comparison.same'));
+    }
+  }
+
+  getCategoryComparison(categoryName: string): { direction: 'up' | 'down' | 'same' } | null {
+    if (!this.selectedMonth || this.previousMonthTotal() === null) return null;
+    const prevCat = this.previousByCategory().find(c => c.categoryName === categoryName);
+    const currentCat = this.byCategory().find(c => c.categoryName === categoryName);
+    const prevAmount = prevCat?.amount || 0;
+    const currentAmount = currentCat?.amount || 0;
+    if (prevAmount === 0 && currentAmount === 0) return null;
+    if (currentAmount > prevAmount) return { direction: 'up' };
+    if (currentAmount < prevAmount) return { direction: 'down' };
+    return { direction: 'same' };
+  }
+
+  // Budget methods
+  private loadBudget(): void {
+    this.budgetService.getBudget().subscribe({
+      next: (budget) => this.budgetAmount.set(budget?.amount ?? null),
+      error: () => this.budgetAmount.set(null)
+    });
+  }
+
+  startEditBudget(): void {
+    this.budgetInput = this.budgetAmount() || 0;
+    this.editingBudget.set(true);
+  }
+
+  cancelEditBudget(): void {
+    this.editingBudget.set(false);
+  }
+
+  saveBudget(): void {
+    if (!this.budgetInput || this.budgetInput <= 0) return;
+    this.budgetService.setBudget(this.budgetInput).subscribe({
+      next: () => {
+        this.budgetAmount.set(this.budgetInput);
+        this.editingBudget.set(false);
+      }
+    });
+  }
+
+  removeBudget(): void {
+    this.budgetService.deleteBudget().subscribe({
+      next: () => {
+        this.budgetAmount.set(null);
+        this.editingBudget.set(false);
       }
     });
   }
@@ -881,7 +1217,7 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
         this.filterYear--;
       }
     }
-    this.updateSelectedMonth();
+    this.updateMonthAndReload();
   }
 
   nextMonth(): void {
@@ -891,7 +1227,7 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
       this.filterMonth = 0;
       this.filterYear++;
     }
-    this.updateSelectedMonth();
+    this.updateMonthAndReload();
   }
 
   toggleAllTime(): void {
@@ -901,10 +1237,10 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
       this.filterYear = now.getFullYear();
       this.filterMonth = now.getMonth();
     }
-    this.updateSelectedMonth();
+    this.updateMonthAndReload();
   }
 
-  private updateSelectedMonth(): void {
+  private updateMonthAndReload(): void {
     this.selectedMonth = this.showAllTime ? '' : `${this.filterYear}-${this.filterMonth + 1}`;
     this.currentPage.set(1);
     this.loadExpenses();

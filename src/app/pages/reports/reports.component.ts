@@ -45,6 +45,11 @@ import { CategorySummary } from '../../models/expense.model';
             <div class="total-card">
               <span class="total-label">{{ 'expenses.total' | translate }}</span>
               <span class="total-amount">{{ totalAmount() | currency:'USD' }}</span>
+              @if (comparisonText()) {
+                <span class="comparison-badge" [class.up]="comparisonPercent() > 0" [class.down]="comparisonPercent() < 0" [class.same]="comparisonPercent() === 0">
+                  {{ comparisonText() }}
+                </span>
+              }
             </div>
 
             <div class="category-list">
@@ -138,12 +143,35 @@ import { CategorySummary } from '../../models/expense.model';
     }
     .total-card {
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
+      align-items: center;
       padding: 15px;
       background: white;
       border-radius: 8px;
       margin-bottom: 20px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      gap: 8px;
+    }
+    .comparison-badge {
+      font-size: 0.8em;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 12px;
+      width: 100%;
+      text-align: center;
+    }
+    .comparison-badge.up {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+    .comparison-badge.down {
+      background: #dcfce7;
+      color: #16a34a;
+    }
+    .comparison-badge.same {
+      background: #f3f4f6;
+      color: #6b7280;
     }
     .total-label {
       font-size: 1.1em;
@@ -248,6 +276,8 @@ export class ReportsComponent implements OnInit {
   loading = signal(true);
   totalAmount = signal(0);
   byCategory = signal<CategorySummary[]>([]);
+  comparisonPercent = signal<number>(0);
+  comparisonText = signal<string>('');
 
   private filterYear = new Date().getFullYear();
   private filterMonth = new Date().getMonth();
@@ -316,10 +346,51 @@ export class ReportsComponent implements OnInit {
         this.byCategory.set(result.byCategory);
         this.updateChart();
         this.loading.set(false);
+
+        if (!this.showAllTime) {
+          this.loadPreviousMonth(result.totalAmount);
+        } else {
+          this.comparisonText.set('');
+        }
       },
       error: () => {
         this.loading.set(false);
       }
+    });
+  }
+
+  private loadPreviousMonth(currentTotal: number): void {
+    let prevYear = this.filterYear;
+    let prevMonth = this.filterMonth; // 0-indexed
+    prevMonth--;
+    if (prevMonth < 0) { prevMonth = 11; prevYear--; }
+
+    const month = prevMonth + 1;
+    const prevFromDate = `${prevYear}-${String(month).padStart(2, '0')}-01`;
+    const lastDay = new Date(prevYear, month, 0).getDate();
+    const prevToDate = `${prevYear}-${String(month).padStart(2, '0')}-${lastDay}`;
+
+    this.expenseService.getExpenses(1, 1, prevFromDate, prevToDate).subscribe({
+      next: (result) => {
+        const prevTotal = result.totalAmount;
+        if (prevTotal === 0) {
+          this.comparisonPercent.set(0);
+          this.comparisonText.set(this.translate.instant('comparison.noData'));
+          return;
+        }
+        const diff = ((currentTotal - prevTotal) / prevTotal) * 100;
+        const percent = Math.abs(Math.round(diff));
+        this.comparisonPercent.set(diff);
+
+        if (diff > 0) {
+          this.comparisonText.set(this.translate.instant('comparison.more', { percent }));
+        } else if (diff < 0) {
+          this.comparisonText.set(this.translate.instant('comparison.less', { percent }));
+        } else {
+          this.comparisonText.set(this.translate.instant('comparison.same'));
+        }
+      },
+      error: () => this.comparisonText.set('')
     });
   }
 

@@ -113,6 +113,20 @@
     "noUsers": "No se encontraron usuarios",
     "loading": "Cargando..."
   },
+  "comparison": {
+    "more": "+{{percent}}% vs mes anterior",
+    "less": "-{{percent}}% vs mes anterior",
+    "same": "Igual que el mes anterior",
+    "noData": "Sin datos del mes anterior"
+  },
+  "budget": {
+    "set": "Definir presupuesto mensual",
+    "remaining": "Quedan {{amount}}",
+    "exceeded": "Excedido en {{amount}}",
+    "of": "de",
+    "save": "Guardar",
+    "remove": "Quitar presupuesto"
+  },
   "errors": {
     "loadExpenses": "Error al cargar los gastos",
     "deleteExpense": "Error al eliminar el gasto"

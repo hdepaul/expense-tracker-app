@@ -113,6 +113,20 @@
     "noUsers": "No users found",
     "loading": "Loading..."
   },
+  "comparison": {
+    "more": "+{{percent}}% vs last month",
+    "less": "-{{percent}}% vs last month",
+    "same": "Same as last month",
+    "noData": "No previous data"
+  },
+  "budget": {
+    "set": "Set monthly budget",
+    "remaining": "{{amount}} remaining",
+    "exceeded": "Exceeded by {{amount}}",
+    "of": "of",
+    "save": "Save",
+    "remove": "Remove budget"
+  },
   "errors": {
     "loadExpenses": "Failed to load expenses",
     "deleteExpense": "Failed to delete expense"
