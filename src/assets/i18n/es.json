@@ -12,9 +12,20 @@
   },
   "home": {
     "welcome": "Bienvenido",
-    "welcomeGuest": "Bienvenido a Control de Gastos",
-    "pleaseLogin": "Por favor ingresá para continuar.",
-    "email": "Email"
+    "heroTitle": "Controlá tus gastos hablando",
+    "heroSubtitle": "Decí o escribí lo que gastaste y la inteligencia artificial lo registra por vos. Sin formularios, sin complicaciones.",
+    "getStarted": "Crear cuenta gratis",
+    "feature1Title": "Escribí en natural",
+    "feature1Desc": "\"Gasté $500 en nafta\" y listo. La AI entiende lo que decís y lo registra.",
+    "feature2Title": "Dictá por voz",
+    "feature2Desc": "Tocá el micrófono y hablá. Ideal cuando tenés las manos ocupadas.",
+    "feature3Title": "Reportes claros",
+    "feature3Desc": "Gráficos por categoría para entender en qué se te va la plata.",
+    "howTitle": "¿Cómo funciona?",
+    "step1": "Creá tu cuenta gratis",
+    "step2": "Decí qué gastaste por texto o voz",
+    "step3": "Mirá tus reportes y controlá tus gastos",
+    "ctaTitle": "Empezá a controlar tus gastos hoy"
   },
   "auth": {
     "login": "Ingresar",
@@ -83,7 +94,14 @@
     "processing": "Pensando...",
     "error": "Error al procesar. Intentá de nuevo.",
     "clear": "Limpiar chat",
-    "rateLimited": "Límite diario alcanzado. Intentá mañana."
+    "rateLimited": "Límite diario alcanzado. Intentá mañana.",
+    "voice": "Dictar gasto por voz",
+    "listening": "Escuchando...",
+    "stopListening": "Dejar de escuchar",
+    "welcomeMessage": "Decime qué gastaste y lo registro por vos. Podés escribir o usar el micrófono.",
+    "chip1": "Gasté $500 en nafta",
+    "chip2": "Pagué $1500 de luz",
+    "chip3": "Almorcé $3000 hoy"
   },
   "errors": {
     "loadExpenses": "Error al cargar los gastos",

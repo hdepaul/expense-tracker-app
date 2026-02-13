@@ -31,16 +31,45 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
             }
           </div>
           <button class="btn-clear-chat" (click)="clearChat()" [title]="'ai.clear' | translate">✕</button>
+        } @else {
+          <div class="chat-welcome">
+            <div class="welcome-icon">💬</div>
+            <p class="welcome-text">{{ 'ai.welcomeMessage' | translate }}</p>
+            <div class="chat-chips">
+              @for (chip of exampleChips; track chip) {
+                <button class="chip" (click)="sendChip(chip)">{{ chip }}</button>
+              }
+            </div>
+          </div>
         }
         <div class="chat-input-bar">
           <input
             type="text"
             [(ngModel)]="chatInput"
             (keydown.enter)="sendMessage()"
-            [placeholder]="'ai.placeholder' | translate"
-            [disabled]="aiLoading()"
+            [placeholder]="isRecording() ? ('ai.listening' | translate) : ('ai.placeholder' | translate)"
+            [disabled]="aiLoading() || isRecording()"
             class="chat-input"
+            [class.recording]="isRecording()"
           />
+          @if (speechSupported) {
+            <button
+              (click)="toggleVoice()"
+              [disabled]="aiLoading()"
+              class="btn-mic"
+              [class.recording]="isRecording()"
+              [title]="isRecording() ? ('ai.stopListening' | translate) : ('ai.voice' | translate)">
+              @if (isRecording()) {
+                <span class="mic-pulse"></span>
+              }
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                <line x1="12" y1="19" x2="12" y2="23"/>
+                <line x1="8" y1="23" x2="16" y2="23"/>
+              </svg>
+            </button>
+          }
           <button
             (click)="sendMessage()"
             [disabled]="aiLoading() || !chatInput.trim()"
@@ -246,6 +275,42 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       background: #e0e0e0;
       color: #333;
     }
+    .chat-welcome {
+      text-align: center;
+      padding: 8px 0 12px;
+    }
+    .welcome-icon {
+      font-size: 2em;
+      margin-bottom: 4px;
+    }
+    .welcome-text {
+      color: #666;
+      font-size: 0.95em;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+    .chat-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+    .chip {
+      background: #e8f0fe;
+      color: #1a73e8;
+      border: 1px solid #d2e3fc;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 0.85em;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .chip:hover {
+      background: #1a73e8;
+      color: white;
+      border-color: #1a73e8;
+    }
     .chat-input-bar {
       display: flex;
       gap: 8px;
@@ -264,6 +329,48 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
     }
     .chat-input:disabled {
       background: #f0f0f0;
+    }
+    .btn-mic {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: none;
+      background: #f0f0f0;
+      color: #666;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      position: relative;
+      transition: all 0.2s;
+    }
+    .btn-mic:hover {
+      background: #e0e0e0;
+      color: #333;
+    }
+    .btn-mic.recording {
+      background: #dc3545;
+      color: white;
+    }
+    .btn-mic:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .mic-pulse {
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 2px solid #dc3545;
+      animation: micPulse 1.2s infinite;
+    }
+    @keyframes micPulse {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1.4); opacity: 0; }
+    }
+    .chat-input.recording {
+      border-color: #dc3545;
+      background: #fff5f5;
     }
     .btn-send {
       padding: 10px 20px;
@@ -516,6 +623,18 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       .chat-bubble {
         max-width: 90%;
       }
+      .chat-input-bar {
+        gap: 6px;
+      }
+      .chat-input {
+        min-width: 0;
+        padding: 10px 12px;
+        font-size: 16px;
+      }
+      .btn-mic {
+        width: 44px;
+        height: 44px;
+      }
       .btn-send {
         padding: 10px 14px;
       }
@@ -561,6 +680,20 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
   aiLoading = signal(false);
   chatInput = '';
   private shouldScrollChat = false;
+
+  // Voice
+  speechSupported = 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
+  isRecording = signal(false);
+  private recognition: any = null;
+
+  // Example chips (translated via getter)
+  get exampleChips(): string[] {
+    return [
+      this.translate.instant('ai.chip1'),
+      this.translate.instant('ai.chip2'),
+      this.translate.instant('ai.chip3'),
+    ];
+  }
 
   ngOnInit(): void {
     const page = this.route.snapshot.queryParamMap.get('page');
@@ -612,6 +745,38 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
         this.shouldScrollChat = true;
       },
     });
+  }
+
+  sendChip(text: string): void {
+    this.chatInput = text;
+    this.sendMessage();
+  }
+
+  toggleVoice(): void {
+    if (this.isRecording()) {
+      this.recognition?.stop();
+      return;
+    }
+
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    this.recognition = new SpeechRecognition();
+    this.recognition.lang = this.translate.currentLang === 'es' ? 'es-AR' : 'en-US';
+    this.recognition.interimResults = false;
+    this.recognition.maxAlternatives = 1;
+
+    this.recognition.onstart = () => this.isRecording.set(true);
+
+    this.recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      this.chatInput = transcript;
+      this.isRecording.set(false);
+      this.sendMessage();
+    };
+
+    this.recognition.onerror = () => this.isRecording.set(false);
+    this.recognition.onend = () => this.isRecording.set(false);
+
+    this.recognition.start();
   }
 
   clearChat(): void {

@@ -12,9 +12,20 @@
   },
   "home": {
     "welcome": "Welcome",
-    "welcomeGuest": "Welcome to Expense Tracker",
-    "pleaseLogin": "Please login to continue.",
-    "email": "Email"
+    "heroTitle": "Track expenses by talking",
+    "heroSubtitle": "Say or type what you spent and AI records it for you. No forms, no hassle.",
+    "getStarted": "Create free account",
+    "feature1Title": "Type naturally",
+    "feature1Desc": "\"Spent $500 on gas\" and done. AI understands what you say and records it.",
+    "feature2Title": "Dictate by voice",
+    "feature2Desc": "Tap the microphone and speak. Perfect when your hands are busy.",
+    "feature3Title": "Clear reports",
+    "feature3Desc": "Charts by category to understand where your money goes.",
+    "howTitle": "How does it work?",
+    "step1": "Create your free account",
+    "step2": "Say what you spent by text or voice",
+    "step3": "Check your reports and control spending",
+    "ctaTitle": "Start tracking your expenses today"
   },
   "auth": {
     "login": "Login",
@@ -83,7 +94,14 @@
     "processing": "Thinking...",
     "error": "Error processing. Try again.",
     "clear": "Clear chat",
-    "rateLimited": "Daily limit reached. Try again tomorrow."
+    "rateLimited": "Daily limit reached. Try again tomorrow.",
+    "voice": "Dictate expense by voice",
+    "listening": "Listening...",
+    "stopListening": "Stop listening",
+    "welcomeMessage": "Tell me what you spent and I'll record it for you. You can type or use the microphone.",
+    "chip1": "Spent $500 on gas",
+    "chip2": "Paid $1500 for electricity",
+    "chip3": "Had lunch for $3000 today"
   },
   "errors": {
     "loadExpenses": "Failed to load expenses",

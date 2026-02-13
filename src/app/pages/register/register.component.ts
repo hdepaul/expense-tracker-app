@@ -60,13 +60,22 @@ import { AuthService } from '../../services/auth.service';
 
         <div class="form-group">
           <label for="password">{{ 'auth.password' | translate }}</label>
-          <input
-            type="password"
-            id="password"
-            [(ngModel)]="password"
-            name="password"
-            required
-            minlength="8">
+          <div class="password-wrapper">
+            <input
+              [type]="showPassword() ? 'text' : 'password'"
+              id="password"
+              [(ngModel)]="password"
+              name="password"
+              required
+              minlength="8">
+            <button type="button" class="btn-eye" (click)="showPassword.set(!showPassword())">
+              @if (showPassword()) {
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              } @else {
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              }
+            </button>
+          </div>
           <ul class="password-hints">
             <li [class.valid]="password.length >= 8">{{ 'auth.pwMin8' | translate }}</li>
             <li [class.valid]="hasUppercase()">{{ 'auth.pwUppercase' | translate }}</li>
@@ -77,12 +86,21 @@ import { AuthService } from '../../services/auth.service';
 
         <div class="form-group">
           <label for="confirmPassword">{{ 'auth.confirmPassword' | translate }}</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            [(ngModel)]="confirmPassword"
-            name="confirmPassword"
-            required>
+          <div class="password-wrapper">
+            <input
+              [type]="showConfirmPassword() ? 'text' : 'password'"
+              id="confirmPassword"
+              [(ngModel)]="confirmPassword"
+              name="confirmPassword"
+              required>
+            <button type="button" class="btn-eye" (click)="showConfirmPassword.set(!showConfirmPassword())">
+              @if (showConfirmPassword()) {
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              } @else {
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              }
+            </button>
+          </div>
           @if (confirmPassword && password !== confirmPassword) {
             <span class="field-error">{{ 'auth.passwordMismatch' | translate }}</span>
           }
@@ -114,7 +132,30 @@ import { AuthService } from '../../services/auth.service';
       padding: 8px;
       box-sizing: border-box;
     }
-    button {
+    .password-wrapper {
+      position: relative;
+    }
+    .password-wrapper input {
+      padding-right: 40px;
+    }
+    .btn-eye {
+      position: absolute;
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #999;
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      width: auto;
+    }
+    .btn-eye:hover {
+      color: #333;
+    }
+    button[type="submit"] {
       width: 100%;
       padding: 10px;
       background: #28a745;
@@ -122,7 +163,7 @@ import { AuthService } from '../../services/auth.service';
       border: none;
       cursor: pointer;
     }
-    button:disabled {
+    button[type="submit"]:disabled {
       background: #ccc;
     }
     .error {
@@ -204,6 +245,8 @@ export class RegisterComponent {
   confirmPassword = '';
   loading = signal(false);
   error = signal('');
+  showPassword = signal(false);
+  showConfirmPassword = signal(false);
 
   hasUppercase(): boolean { return /[A-Z]/.test(this.password); }
   hasLowercase(): boolean { return /[a-z]/.test(this.password); }
