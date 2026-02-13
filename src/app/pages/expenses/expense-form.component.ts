@@ -47,6 +47,7 @@ import { Category } from '../../models/expense.model';
             id="date"
             [(ngModel)]="date"
             name="date"
+            [max]="today"
             required>
         </div>
 
@@ -182,6 +183,7 @@ export class ExpenseFormComponent implements OnInit {
   date = '';
   categoryId = '';
   notes = '';
+  today = new Date().toISOString().split('T')[0];
 
   ngOnInit(): void {
     this.loadCategories();
