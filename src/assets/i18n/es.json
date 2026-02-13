@@ -118,7 +118,7 @@
     "deleteExpense": "Error al eliminar el gasto"
   },
   "categories": {
-    "Restaurants & Bars": "Restaurantes y Bares",
+    "Restaurants": "Restaurantes y Bares",
     "Groceries": "Supermercado",
     "Transportation": "Transporte",
     "Housing": "Vivienda",

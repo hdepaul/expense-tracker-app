@@ -118,7 +118,7 @@
     "deleteExpense": "Failed to delete expense"
   },
   "categories": {
-    "Restaurants & Bars": "Restaurants & Bars",
+    "Restaurants": "Restaurants & Bars",
     "Groceries": "Groceries",
     "Transportation": "Transportation",
     "Housing": "Housing",

@@ -214,7 +214,7 @@ export class ReportsComponent implements OnInit {
   availableMonths = this.generateMonths();
 
   private categoryColors: Record<string, string> = {
-    'Restaurants & Bars': '#FF6384',
+    'Restaurants': '#FF6384',
     'Transportation': '#36A2EB',
     'Housing': '#FFCE56',
     'Entertainment': '#4BC0C0',
