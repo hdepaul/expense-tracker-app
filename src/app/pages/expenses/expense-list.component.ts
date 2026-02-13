@@ -335,7 +335,7 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       height: 42px;
       border-radius: 50%;
       border: 2px solid #007bff;
-      background: #e8f0fe;
+      background: white;
       color: #007bff;
       cursor: pointer;
       display: flex;
@@ -345,9 +345,18 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       position: relative;
       transition: all 0.2s;
     }
+    .btn-mic svg {
+      stroke: #007bff;
+      transition: stroke 0.2s;
+    }
     .btn-mic:hover {
       background: #007bff;
-      color: white;
+    }
+    .btn-mic:hover svg {
+      stroke: white;
+    }
+    .btn-mic.recording svg {
+      stroke: white;
     }
     .btn-mic.recording {
       background: #dc3545;
