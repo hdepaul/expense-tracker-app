@@ -326,8 +326,8 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       background: #f0f0f0;
     }
     .btn-mic {
-      width: 42px;
-      height: 42px;
+      width: 46px;
+      height: 46px;
       border-radius: 50%;
       border: 2px solid #007bff;
       background: white;
@@ -340,7 +340,7 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       transition: all 0.2s;
     }
     .mic-icon {
-      font-size: 1.2em;
+      font-size: 1.5em;
       line-height: 1;
     }
     .btn-mic:hover {
