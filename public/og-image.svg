@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#343a40"/>
+  <circle cx="200" cy="315" r="80" fill="#2d3339"/>
+  <text x="200" y="345" font-size="100" text-anchor="middle" fill="#28a745" font-family="Arial, sans-serif" font-weight="bold">$</text>
+  <text x="420" y="280" font-size="72" fill="white" font-family="Arial, sans-serif" font-weight="bold">EnQueGasto</text>
+  <text x="420" y="350" font-size="32" fill="#adb5bd" font-family="Arial, sans-serif">Controlá tus gastos hablando con IA</text>
+  <text x="420" y="400" font-size="28" fill="#6c757d" font-family="Arial, sans-serif">enquegasto.com</text>
+  <rect x="420" y="440" width="200" height="50" rx="8" fill="#007bff"/>
+  <text x="520" y="473" font-size="22" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-weight="600">Probalo gratis</text>
+</svg>
