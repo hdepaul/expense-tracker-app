@@ -26,7 +26,11 @@
     "step1": "Creá tu cuenta gratis",
     "step2": "Decí qué gastaste por texto o voz",
     "step3": "Mirá tus reportes y controlá tus gastos",
-    "ctaTitle": "Empezá a controlar tus gastos hoy"
+    "ctaTitle": "Empezá a controlar tus gastos hoy",
+    "share": "Compartir",
+    "shareCta": "Compartí la app con alguien",
+    "shareText": "Controlá tus gastos hablando con IA. Probalo gratis en enquegasto.com",
+    "copied": "Link copiado!"
   },
   "auth": {
     "login": "Ingresar",

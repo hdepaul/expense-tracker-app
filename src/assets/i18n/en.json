@@ -26,7 +26,11 @@
     "step1": "Create your free account",
     "step2": "Say what you spent by text or voice",
     "step3": "Check your reports and control spending",
-    "ctaTitle": "Start tracking your expenses today"
+    "ctaTitle": "Start tracking your expenses today",
+    "share": "Share",
+    "shareCta": "Share the app with someone",
+    "shareText": "Track your expenses by talking to AI. Try it free at enquegasto.com",
+    "copied": "Link copied!"
   },
   "auth": {
     "login": "Login",

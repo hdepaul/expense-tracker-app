@@ -38,6 +38,10 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
           </div>
         }
 
+        <button (click)="shareApp()" class="btn-share" [title]="'home.share' | translate">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          @if (showCopied()) { <span class="copied-tooltip">{{ 'home.copied' | translate }}</span> }
+        </button>
         <button (click)="toggleLang()" class="btn-lang">{{ currentLang() }}</button>
       </div>
     </nav>
@@ -122,8 +126,38 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     .btn-logout:hover {
       background: #c82333;
     }
-    .btn-lang {
+    .btn-share {
       margin-left: 15px;
+      padding: 6px 10px;
+      background: transparent;
+      color: #adb5bd;
+      border: 1px solid #adb5bd;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      position: relative;
+      transition: all 0.2s;
+    }
+    .btn-share:hover {
+      color: white;
+      border-color: white;
+    }
+    .copied-tooltip {
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #22c55e;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.75em;
+      white-space: nowrap;
+    }
+    .btn-lang {
+      margin-left: 10px;
       padding: 6px 12px;
       background: transparent;
       color: #adb5bd;
@@ -180,6 +214,12 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       .btn-logout {
         width: 100%;
       }
+      .btn-share {
+        margin-left: 0;
+        margin-top: 10px;
+        width: 100%;
+        justify-content: center;
+      }
       .btn-lang {
         margin-left: 0;
         margin-top: 10px;
@@ -194,6 +234,7 @@ export class NavbarComponent {
   private translate = inject(TranslateService);
 
   menuOpen = signal(false);
+  showCopied = signal(false);
 
   currentLang(): string {
     return this.translate.currentLang || 'en';
@@ -210,6 +251,22 @@ export class NavbarComponent {
 
   closeMenu(): void {
     this.menuOpen.set(false);
+  }
+
+  async shareApp(): Promise<void> {
+    const url = 'https://enquegasto.com';
+    const text = this.translate.instant('home.shareText');
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: 'EnQueGasto', text, url });
+      } catch { /* user cancelled */ }
+    } else {
+      await navigator.clipboard.writeText(url);
+      this.showCopied.set(true);
+      setTimeout(() => this.showCopied.set(false), 2000);
+    }
+    this.closeMenu();
   }
 
   logout(): void {

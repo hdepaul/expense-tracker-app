@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-home',
@@ -86,6 +86,18 @@ import { TranslateModule } from '@ngx-translate/core';
         <section class="cta">
           <h2>{{ 'home.ctaTitle' | translate }}</h2>
           <a routerLink="/register" class="btn-primary btn-lg">{{ 'home.getStarted' | translate }}</a>
+          <div class="share-section">
+            <p class="share-label">{{ 'home.shareCta' | translate }}</p>
+            <div class="share-row">
+              <div class="qr-container">
+                <img [src]="qrUrl" alt="QR enquegasto.com" width="140" height="140" />
+              </div>
+              <button (click)="shareApp()" class="btn-outline btn-share-landing">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                {{ showCopied() ? ('home.copied' | translate) : ('home.share' | translate) }}
+              </button>
+            </div>
+          </div>
         </section>
       </div>
     }
@@ -285,6 +297,37 @@ import { TranslateModule } from '@ngx-translate/core';
       color: #1a1a1a;
       margin-bottom: 20px;
     }
+    .share-section {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #d0dff0;
+    }
+    .share-label {
+      color: #666;
+      font-size: 0.95em;
+      margin-bottom: 16px;
+    }
+    .share-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+    }
+    .qr-container {
+      background: white;
+      padding: 10px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .qr-container img {
+      display: block;
+      border-radius: 4px;
+    }
+    .btn-share-landing {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
     /* Mobile */
     @media (max-width: 768px) {
@@ -338,12 +381,35 @@ import { TranslateModule } from '@ngx-translate/core';
       .cta h2 {
         font-size: 1.3em;
       }
+      .share-row {
+        flex-direction: column;
+        gap: 16px;
+      }
     }
   `]
 })
 export class HomeComponent {
   authService = inject(AuthService);
   private router = inject(Router);
+  private translate = inject(TranslateService);
+
+  showCopied = signal(false);
+  qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https://enquegasto.com';
+
+  async shareApp(): Promise<void> {
+    const url = 'https://enquegasto.com';
+    const text = this.translate.instant('home.shareText');
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: 'EnQueGasto', text, url });
+      } catch { /* user cancelled */ }
+    } else {
+      await navigator.clipboard.writeText(url);
+      this.showCopied.set(true);
+      setTimeout(() => this.showCopied.set(false), 2000);
+    }
+  }
 
   logout(): void {
     this.authService.logout();
