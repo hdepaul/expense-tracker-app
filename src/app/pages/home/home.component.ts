@@ -73,9 +73,9 @@ import { CategorySummary } from '../../models/expense.model';
             </span>
             <span>{{ 'nav.myExpenses' | translate }}</span>
           </a>
-          <a routerLink="/expenses/new" class="dash-action-card">
-            <span class="dash-action-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          <a routerLink="/expenses" class="dash-action-card highlight">
+            <span class="dash-action-icon chat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
             </span>
             <span>{{ 'home.addExpense' | translate }}</span>
           </a>
@@ -304,6 +304,18 @@ import { CategorySummary } from '../../models/expense.model';
       border-color: #007bff;
       color: #007bff;
       box-shadow: 0 2px 8px rgba(0,123,255,0.1);
+    }
+    .dash-action-card.highlight {
+      border-color: #007bff;
+      background: #f0f7ff;
+    }
+    .dash-action-card.highlight:hover {
+      background: #007bff;
+      color: white;
+    }
+    .dash-action-card.highlight:hover .chat-icon {
+      background: rgba(255,255,255,0.2);
+      color: white;
     }
     .dash-action-icon {
       width: 48px;

@@ -22,7 +22,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
           <div class="nav-links">
             <a routerLink="/expenses" (click)="closeMenu()">{{ 'nav.myExpenses' | translate }}</a>
             <a routerLink="/reports" (click)="closeMenu()">{{ 'nav.reports' | translate }}</a>
-            <a routerLink="/expenses/new" (click)="closeMenu()">+ {{ 'nav.new' | translate }}</a>
             @if (authService.isAdmin()) {
               <a routerLink="/admin" (click)="closeMenu()">{{ 'nav.admin' | translate }}</a>
             }
