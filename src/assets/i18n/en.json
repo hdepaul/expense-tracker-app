@@ -12,7 +12,14 @@
     "admin": "Admin"
   },
   "home": {
-    "welcome": "Welcome",
+    "welcome": "Hi",
+    "thisMonth": "This month",
+    "vsPrevMonth": "vs last month",
+    "noBudget": "No budget set",
+    "quickActions": "Quick actions",
+    "addExpense": "Add expense",
+    "viewReports": "View reports",
+    "noExpensesThisMonth": "No expenses recorded this month yet",
     "heroTitle": "Track expenses by talking",
     "heroSubtitle": "Say or type what you spent and AI records it for you. No forms, no hassle.",
     "getStarted": "Create free account",

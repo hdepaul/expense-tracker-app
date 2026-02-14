@@ -627,8 +627,9 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       align-items: center;
     }
     .budget-text {
-      font-size: 0.9em;
-      color: #555;
+      font-size: 1.05em;
+      font-weight: 500;
+      color: #333;
     }
     .budget-actions-inline {
       display: flex;
@@ -648,7 +649,7 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       color: #333;
     }
     .budget-bar {
-      height: 8px;
+      height: 10px;
       background: #e5e7eb;
       border-radius: 4px;
       overflow: hidden;
@@ -663,7 +664,8 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
     .budget-bar-fill.orange { background: #f97316; }
     .budget-bar-fill.red { background: #ef4444; }
     .budget-status {
-      font-size: 0.8em;
+      font-size: 0.95em;
+      font-weight: 500;
       color: #16a34a;
     }
     .budget-status.exceeded {

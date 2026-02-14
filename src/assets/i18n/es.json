@@ -12,7 +12,14 @@
     "admin": "Admin"
   },
   "home": {
-    "welcome": "Bienvenido",
+    "welcome": "Hola",
+    "thisMonth": "Este mes",
+    "vsPrevMonth": "vs mes anterior",
+    "noBudget": "Sin presupuesto",
+    "quickActions": "Acciones rápidas",
+    "addExpense": "Agregar gasto",
+    "viewReports": "Ver reportes",
+    "noExpensesThisMonth": "Todavía no registraste gastos este mes",
     "heroTitle": "Controlá tus gastos hablando",
     "heroSubtitle": "Decí o escribí lo que gastaste y la inteligencia artificial lo registra por vos. Sin formularios, sin complicaciones.",
     "getStarted": "Crear cuenta gratis",
