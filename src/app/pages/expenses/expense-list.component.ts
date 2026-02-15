@@ -118,9 +118,9 @@ import { Expense, CategorySummary, ChatMessage } from '../../models/expense.mode
 
       @if (!loading() && expenses().length === 0) {
         <div class="empty-state">
-          <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           <p>{{ 'expenses.noExpenses' | translate }}</p>
-          <a routerLink="/expenses/new" class="btn-cta">{{ 'expenses.createFirst' | translate }}</a>
+          <p class="empty-hint">{{ 'expenses.emptyHint' | translate }}</p>
         </div>
       }
 
@@ -588,6 +588,12 @@ import { Expense, CategorySummary, ChatMessage } from '../../models/expense.mode
     .empty-state p {
       margin: 0;
       font-size: 1em;
+    }
+    .empty-hint {
+      font-size: 0.9em !important;
+      color: var(--text-muted) !important;
+      line-height: 1.5;
+      max-width: 280px;
     }
     .btn-cta {
       display: inline-block;
@@ -1060,6 +1066,7 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked, OnDestroy
 
     // Optimistic removal
     this.expenses.update(arr => arr.filter(e => e.id !== expense.id));
+    this.totalCount.update(c => Math.max(0, c - 1));
     this.closeSwipe();
 
     // Cancel any existing pending delete for this expense
@@ -1094,6 +1101,7 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked, OnDestroy
               restored.splice(insertAt, 0, pending.expense);
               return restored;
             });
+            this.totalCount.update(c => c + 1);
           }
         }
       }
