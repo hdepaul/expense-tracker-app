@@ -1,14 +1,14 @@
 import { Component, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink, TranslateModule],
+  imports: [RouterLink, RouterLinkActive, TranslateModule],
   template: `
-    <nav class="navbar">
+    <nav class="navbar" [class.logged-in]="authService.isLoggedIn()">
       <a routerLink="/" class="brand">{{ 'app.title' | translate }}</a>
 
       <button class="hamburger" (click)="toggleMenu()" [class.active]="menuOpen()">
@@ -51,9 +51,37 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
             }
           </button>
           <button (click)="toggleLang()" class="btn-lang">{{ currentLang() }}</button>
+          @if (authService.isLoggedIn()) {
+            <button (click)="logout()" class="btn-logout-icon" [title]="'nav.logout' | translate">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            </button>
+          }
         </div>
       </div>
     </nav>
+
+    @if (authService.isLoggedIn()) {
+      <nav class="bottom-nav">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="bottom-nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>{{ 'nav.home' | translate }}</span>
+        </a>
+        <a routerLink="/expenses" routerLinkActive="active" class="bottom-nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <span>{{ 'nav.myExpenses' | translate }}</span>
+        </a>
+        <a routerLink="/reports" routerLinkActive="active" class="bottom-nav-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+          <span>{{ 'nav.reports' | translate }}</span>
+        </a>
+        @if (authService.isAdmin()) {
+          <a routerLink="/admin" routerLinkActive="active" class="bottom-nav-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>{{ 'nav.admin' | translate }}</span>
+          </a>
+        }
+      </nav>
+    }
   `,
   styles: [`
     .navbar {
@@ -136,6 +164,22 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     .btn-logout:hover {
       background: var(--danger-hover);
     }
+    .btn-logout-icon {
+      display: none;
+      padding: 6px 10px;
+      background: transparent;
+      color: var(--danger);
+      border: 1px solid var(--danger);
+      border-radius: 4px;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .btn-logout-icon:hover {
+      color: white;
+      background: var(--danger);
+    }
     .nav-toolbar {
       display: flex;
       align-items: center;
@@ -202,6 +246,11 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       border-color: white;
     }
 
+    /* Bottom nav - hidden on desktop */
+    .bottom-nav {
+      display: none;
+    }
+
     /* Mobile styles */
     @media (max-width: 768px) {
       .navbar {
@@ -252,6 +301,84 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       .btn-share, .btn-theme, .btn-lang {
         flex: 1;
         justify-content: center;
+      }
+
+      /* === Logged-in mobile: compact top bar + bottom nav === */
+      .navbar.logged-in {
+        flex-wrap: nowrap;
+      }
+      .navbar.logged-in .hamburger {
+        display: none;
+      }
+      .navbar.logged-in .nav-content {
+        display: flex;
+        width: auto;
+        flex-direction: row;
+        align-items: center;
+        gap: 0;
+        padding-top: 0;
+        margin-left: auto;
+      }
+      .navbar.logged-in .nav-links,
+      .navbar.logged-in .user-menu {
+        display: none;
+      }
+      .navbar.logged-in .nav-toolbar {
+        margin-top: 0;
+        margin-left: 0;
+        gap: 4px;
+      }
+      .navbar.logged-in .nav-toolbar .btn-share,
+      .navbar.logged-in .nav-toolbar .btn-theme,
+      .navbar.logged-in .nav-toolbar .btn-lang {
+        flex: none;
+        border: none;
+        padding: 6px;
+      }
+      .navbar.logged-in .btn-logout-icon {
+        display: flex;
+        border: none;
+        padding: 6px;
+      }
+      .navbar.logged-in .brand {
+        flex-shrink: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      /* Bottom nav */
+      .bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        background: var(--bg-nav);
+        border-top: 1px solid var(--nav-border);
+        padding: 4px 0;
+        padding-bottom: env(safe-area-inset-bottom, 4px);
+      }
+      .bottom-nav-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        padding: 6px 4px;
+        color: var(--nav-link);
+        text-decoration: none;
+        font-size: 0.65em;
+        transition: color 0.2s;
+      }
+      .bottom-nav-item.active {
+        color: var(--accent);
+        font-weight: bold;
+      }
+      .bottom-nav-item:hover {
+        text-decoration: none;
       }
     }
   `]
