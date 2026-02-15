@@ -3,6 +3,7 @@
     "title": "Control de Gastos"
   },
   "nav": {
+    "home": "Inicio",
     "myExpenses": "Mis Gastos",
     "reports": "Reportes",
     "new": "Nuevo",

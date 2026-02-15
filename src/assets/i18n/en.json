@@ -3,6 +3,7 @@
     "title": "Expense Tracker"
   },
   "nav": {
+    "home": "Home",
     "myExpenses": "My Expenses",
     "reports": "Reports",
     "new": "New",
