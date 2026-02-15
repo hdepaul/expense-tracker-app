@@ -1,10 +1,11 @@
-import { Component, inject, signal, OnInit, computed, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
-import { RouterLink, ActivatedRoute } from '@angular/router';
+import { Component, inject, signal, OnInit, computed, ViewChild, ElementRef, AfterViewChecked, effect } from '@angular/core';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { DatePipe, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ExpenseService } from '../../services/expense.service';
 import { AIService } from '../../services/ai.service';
+import { ToastService } from '../../services/toast.service';
 import { Expense, CategorySummary, ChatMessage } from '../../models/expense.model';
 import { ConfirmModalComponent } from '../../components/confirm-modal.component';
 
@@ -93,30 +94,43 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
         <p>{{ 'expenses.loading' | translate }}</p>
       }
 
-      @if (error()) {
-        <p class="error">{{ error() }}</p>
-      }
-
       @if (!loading() && expenses().length === 0) {
-        <p class="empty">{{ 'expenses.noExpenses' | translate }}</p>
+        <div class="empty-state">
+          <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+          <p>{{ 'expenses.noExpenses' | translate }}</p>
+          <a routerLink="/expenses/new" class="btn-cta">{{ 'expenses.createFirst' | translate }}</a>
+        </div>
       }
 
-      <div class="expense-list">
+      <div class="expense-list" (click)="closeSwipe()">
         @for (expense of expenses(); track expense.id) {
-          <div class="expense-card">
-            <div class="expense-info">
-              <h3>{{ expense.description }}</h3>
-              <p class="date">{{ expense.date | date:'mediumDate' }}</p>
-              @if (expense.notes) {
-                <p class="notes">{{ expense.notes }}</p>
-              }
+          <div class="expense-card"
+            (touchstart)="onTouchStart($event, expense)"
+            (touchmove)="onTouchMove($event, expense)"
+            (touchend)="onTouchEnd(expense)">
+            <div class="swipe-action swipe-action-edit" (click)="swipeEdit(expense, $event)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
             </div>
-            <div class="expense-amount">
-              {{ expense.amount | currency:'USD' }}
+            <div class="expense-card-inner"
+              [style.transform]="expense.id === swipedExpenseId() ? 'translateX(' + currentSwipeX + 'px)' : ''"
+              [class.swiping]="expense.id === swipedExpenseId() && isSwiping">
+              <div class="expense-info">
+                <h3>{{ expense.description }}</h3>
+                <p class="date">{{ expense.date | date:'mediumDate' }}</p>
+                @if (expense.notes) {
+                  <p class="notes">{{ expense.notes }}</p>
+                }
+              </div>
+              <div class="expense-amount">
+                {{ expense.amount | currency:'USD' }}
+              </div>
+              <div class="expense-actions">
+                <a [routerLink]="['/expenses', expense.id, 'edit']" [queryParams]="{page: currentPage()}" class="btn-icon" [title]="'expenses.edit_btn' | translate">&#9999;&#65039;</a>
+                <button (click)="delete(expense)" class="btn-icon btn-icon-delete" [title]="'expenses.delete' | translate">&#128465;&#65039;</button>
+              </div>
             </div>
-            <div class="expense-actions">
-              <a [routerLink]="['/expenses', expense.id, 'edit']" [queryParams]="{page: currentPage()}" class="btn-icon" [title]="'expenses.edit_btn' | translate">&#9999;&#65039;</a>
-              <button (click)="delete(expense)" class="btn-icon btn-icon-delete" [title]="'expenses.delete' | translate">&#128465;&#65039;</button>
+            <div class="swipe-action swipe-action-delete" (click)="swipeDelete(expense, $event)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
             </div>
           </div>
         }
@@ -440,13 +454,43 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       gap: 15px;
     }
     .expense-card {
-      display: flex;
-      align-items: center;
-      padding: 15px;
+      position: relative;
       border: 1px solid var(--border-color);
       border-radius: 8px;
       background: var(--bg-card);
       transition: background 0.3s, border-color 0.3s;
+      overflow: hidden;
+    }
+    .expense-card-inner {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      background: var(--bg-card);
+      position: relative;
+      z-index: 1;
+      transition: transform 0.3s ease;
+    }
+    .expense-card-inner.swiping {
+      transition: none;
+    }
+    .swipe-action {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 80px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      cursor: pointer;
+    }
+    .swipe-action-edit {
+      left: 0;
+      background: var(--accent);
+    }
+    .swipe-action-delete {
+      right: 0;
+      background: var(--danger);
     }
     .expense-info {
       flex: 1;
@@ -495,16 +539,37 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
     .btn-icon-delete:hover {
       background: var(--comparison-up-bg);
     }
-    .error {
-      color: var(--error-text);
-      background: var(--error-bg);
-      padding: 10px;
-      border-radius: 4px;
-    }
-    .empty {
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
       text-align: center;
       color: var(--text-secondary);
-      padding: 40px;
+      padding: 48px 20px;
+    }
+    .empty-state svg {
+      opacity: 0.4;
+    }
+    .empty-state p {
+      margin: 0;
+      font-size: 1em;
+    }
+    .btn-cta {
+      display: inline-block;
+      padding: 10px 24px;
+      background: var(--accent);
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95em;
+      margin-top: 4px;
+      transition: background 0.2s;
+    }
+    .btn-cta:hover {
+      background: var(--accent-hover);
+      text-decoration: none;
     }
     .pagination {
       display: flex;
@@ -554,9 +619,18 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
         justify-content: center;
       }
       .expense-card {
+        padding: 0;
+      }
+      .expense-card-inner {
         flex-direction: row;
         flex-wrap: wrap;
         gap: 8px;
+      }
+      .swipe-action {
+        display: flex;
+      }
+      .expense-actions {
+        display: none;
       }
       .expense-info {
         flex: 1;
@@ -571,9 +645,6 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       .expense-amount {
         margin-right: 0;
         font-size: 1.1em;
-      }
-      .expense-actions {
-        gap: 8px;
       }
       .pagination {
         flex-direction: column;
@@ -615,13 +686,14 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
   private expenseService = inject(ExpenseService);
   private aiService = inject(AIService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private translate = inject(TranslateService);
+  private toast = inject(ToastService);
 
   @ViewChild('chatMessagesContainer') chatMessagesContainer?: ElementRef<HTMLDivElement>;
 
   expenses = signal<Expense[]>([]);
   loading = signal(true);
-  error = signal('');
   showDeleteModal = signal(false);
   expenseToDelete = signal<Expense | null>(null);
   deleteMessage = computed(() => {
@@ -652,6 +724,15 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
   aiLoading = signal(false);
   chatInput = '';
   private shouldScrollChat = false;
+
+  // Swipe
+  swipedExpenseId = signal<string | null>(null);
+  private touchStartX = 0;
+  private touchStartY = 0;
+  currentSwipeX = 0;
+  isSwiping = false;
+  private swipeDirection: 'horizontal' | 'vertical' | null = null;
+  private readonly SWIPE_THRESHOLD = 80;
 
   // Voice input
   speechSupported = 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
@@ -706,7 +787,7 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
         this.shouldScrollChat = true;
 
         if (response.type === 'expense_created') {
-          // Refresh expense list and clear chat after a short delay
+          this.toast.show(this.translate.instant('toast.aiExpenseCreated'), 'success');
           this.loadExpenses();
           setTimeout(() => this.clearChat(), 5000);
         }
@@ -793,7 +874,7 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
         this.loading.set(false);
       },
       error: () => {
-        this.error.set(this.translate.instant('errors.loadExpenses'));
+        this.toast.show(this.translate.instant('toast.loadError'), 'error');
         this.loading.set(false);
       }
     });
@@ -886,11 +967,11 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
     this.expenseService.deleteExpense(expense.id).subscribe({
       next: () => {
         this.closeModal();
-        // Reload to update pagination correctly
+        this.toast.show(this.translate.instant('toast.expenseDeleted'), 'success');
         this.loadExpenses();
       },
       error: () => {
-        this.error.set(this.translate.instant('errors.deleteExpense'));
+        this.toast.show(this.translate.instant('toast.deleteError'), 'error');
         this.closeModal();
       }
     });
@@ -903,5 +984,73 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
   private closeModal(): void {
     this.showDeleteModal.set(false);
     this.expenseToDelete.set(null);
+  }
+
+  // Swipe methods
+  onTouchStart(event: TouchEvent, expense: Expense): void {
+    const touch = event.touches[0];
+    this.touchStartX = touch.clientX;
+    this.touchStartY = touch.clientY;
+    this.swipeDirection = null;
+
+    if (this.swipedExpenseId() && this.swipedExpenseId() !== expense.id) {
+      this.closeSwipe();
+    }
+  }
+
+  onTouchMove(event: TouchEvent, expense: Expense): void {
+    const touch = event.touches[0];
+    const deltaX = touch.clientX - this.touchStartX;
+    const deltaY = touch.clientY - this.touchStartY;
+
+    if (!this.swipeDirection) {
+      if (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10) {
+        this.swipeDirection = Math.abs(deltaX) > Math.abs(deltaY) ? 'horizontal' : 'vertical';
+      }
+      return;
+    }
+
+    if (this.swipeDirection === 'vertical') return;
+
+    event.preventDefault();
+    this.isSwiping = true;
+    this.swipedExpenseId.set(expense.id);
+
+    const max = this.SWIPE_THRESHOLD;
+    this.currentSwipeX = Math.max(-max, Math.min(max, deltaX));
+  }
+
+  onTouchEnd(expense: Expense): void {
+    if (!this.isSwiping) return;
+    this.isSwiping = false;
+
+    const threshold = this.SWIPE_THRESHOLD * 0.4;
+    if (this.currentSwipeX > threshold) {
+      this.currentSwipeX = this.SWIPE_THRESHOLD;
+    } else if (this.currentSwipeX < -threshold) {
+      this.currentSwipeX = -this.SWIPE_THRESHOLD;
+    } else {
+      this.currentSwipeX = 0;
+      this.swipedExpenseId.set(null);
+    }
+  }
+
+  closeSwipe(): void {
+    this.currentSwipeX = 0;
+    this.swipedExpenseId.set(null);
+  }
+
+  swipeEdit(expense: Expense, event: Event): void {
+    event.stopPropagation();
+    this.closeSwipe();
+    this.router.navigate(['/expenses', expense.id, 'edit'], {
+      queryParams: { page: this.currentPage() }
+    });
+  }
+
+  swipeDelete(expense: Expense, event: Event): void {
+    event.stopPropagation();
+    this.closeSwipe();
+    this.delete(expense);
   }
 }

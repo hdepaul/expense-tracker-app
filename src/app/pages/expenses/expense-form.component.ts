@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ExpenseService } from '../../services/expense.service';
+import { ToastService } from '../../services/toast.service';
 import { Category } from '../../models/expense.model';
 
 @Component({
@@ -175,6 +176,7 @@ export class ExpenseFormComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);
+  private toast = inject(ToastService);
 
   categories = signal<Category[]>([]);
   loading = signal(false);
@@ -257,9 +259,15 @@ export class ExpenseFormComponent implements OnInit {
       : this.expenseService.createExpense(expenseData);
 
     request.subscribe({
-      next: () => this.router.navigate(['/expenses'], {
-        queryParams: { page: this.returnPage }
-      }),
+      next: () => {
+        this.toast.show(
+          this.translate.instant(this.isEdit() ? 'toast.expenseUpdated' : 'toast.expenseCreated'),
+          'success'
+        );
+        this.router.navigate(['/expenses'], {
+          queryParams: { page: this.returnPage }
+        });
+      },
       error: (err) => {
         this.error.set(err.error?.message || this.translate.instant('expenseForm.failedSave'));
         this.loading.set(false);

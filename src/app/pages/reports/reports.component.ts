@@ -28,7 +28,10 @@ import { CategorySummary } from '../../models/expense.model';
       }
 
       @if (!loading() && byCategory().length === 0) {
-        <p class="empty">{{ 'reports.noData' | translate }}</p>
+        <div class="empty-state">
+          <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+          <p>{{ 'reports.noData' | translate }}</p>
+        </div>
       }
 
       @if (!loading() && byCategory().length > 0) {
@@ -222,12 +225,22 @@ import { CategorySummary } from '../../models/expense.model';
       min-width: 45px;
       text-align: right;
     }
-    .empty {
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
       text-align: center;
       color: var(--text-secondary);
-      padding: 60px;
+      padding: 60px 20px;
       background: var(--bg-card-alt);
       border-radius: 8px;
+    }
+    .empty-state svg {
+      opacity: 0.4;
+    }
+    .empty-state p {
+      margin: 0;
     }
     @media (max-width: 768px) {
       .reports-container {

@@ -68,6 +68,7 @@
     "new": "Nuevo Gasto",
     "edit": "Editar Gasto",
     "noExpenses": "No hay gastos todavía. ¡Creá el primero!",
+    "createFirst": "Crear gasto",
     "total": "Total",
     "loading": "Cargando...",
     "allTime": "Todo el tiempo",
@@ -140,6 +141,14 @@
     "of": "de",
     "save": "Guardar",
     "remove": "Quitar presupuesto"
+  },
+  "toast": {
+    "expenseCreated": "Gasto registrado correctamente",
+    "expenseUpdated": "Gasto actualizado correctamente",
+    "expenseDeleted": "Gasto eliminado correctamente",
+    "deleteError": "Error al eliminar el gasto",
+    "loadError": "Error al cargar los gastos",
+    "aiExpenseCreated": "Gasto registrado por IA correctamente"
   },
   "errors": {
     "loadExpenses": "Error al cargar los gastos",

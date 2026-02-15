@@ -32,7 +32,10 @@ import { CategorySummary } from '../../models/expense.model';
               <div class="skeleton-line skeleton-md"></div>
             </div>
           } @else if (monthTotal() === 0) {
-            <p class="dash-empty">{{ 'home.noExpensesThisMonth' | translate }}</p>
+            <div class="dash-empty-state">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <p>{{ 'home.noExpensesThisMonth' | translate }}</p>
+            </div>
           } @else {
             <div class="dash-total">{{ monthTotal() | currency:'USD' }}</div>
             @if (comparisonText()) {
@@ -231,11 +234,21 @@ import { CategorySummary } from '../../models/expense.model';
       margin-bottom: 12px;
       font-weight: 600;
     }
-    .dash-empty {
-      color: var(--text-muted);
-      font-size: 0.95em;
+    .dash-empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
       text-align: center;
-      padding: 20px 0;
+      color: var(--text-muted);
+      padding: 24px 0;
+    }
+    .dash-empty-state svg {
+      opacity: 0.35;
+    }
+    .dash-empty-state p {
+      margin: 0;
+      font-size: 0.95em;
     }
     .dash-total {
       font-size: 2.2em;

@@ -46,6 +46,12 @@
   --budget-bar-bg: #e5e7eb;
   --ai-usage-bg: #f0fdf4;
   --ai-usage-limit-bg: #fef2f2;
+  --toast-success-bg: #f0fdf4;
+  --toast-success-text: #166534;
+  --toast-error-bg: #fef2f2;
+  --toast-error-text: #991b1b;
+  --toast-info-bg: #eff6ff;
+  --toast-info-text: #1e40af;
 }
 
 /* Dark theme */
@@ -96,6 +102,12 @@
   --budget-bar-bg: #2a2a4a;
   --ai-usage-bg: #1a3a2a;
   --ai-usage-limit-bg: #3a1a1a;
+  --toast-success-bg: #1a3a2a;
+  --toast-success-text: #86efac;
+  --toast-error-bg: #3a1a1a;
+  --toast-error-text: #fca5a5;
+  --toast-info-bg: #1a2744;
+  --toast-info-text: #93c5fd;
 }
 
 /* Global Styles */

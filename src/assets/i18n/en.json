@@ -68,6 +68,7 @@
     "new": "New Expense",
     "edit": "Edit Expense",
     "noExpenses": "No expenses yet. Create your first one!",
+    "createFirst": "Create expense",
     "total": "Total",
     "loading": "Loading...",
     "allTime": "All time",
@@ -140,6 +141,14 @@
     "of": "of",
     "save": "Save",
     "remove": "Remove budget"
+  },
+  "toast": {
+    "expenseCreated": "Expense recorded successfully",
+    "expenseUpdated": "Expense updated successfully",
+    "expenseDeleted": "Expense deleted successfully",
+    "deleteError": "Failed to delete expense",
+    "loadError": "Failed to load expenses",
+    "aiExpenseCreated": "Expense recorded by AI successfully"
   },
   "errors": {
     "loadExpenses": "Failed to load expenses",
