@@ -9,6 +9,9 @@ import { ToastService } from '../services/toast.service';
       @for (toast of toastService.toasts(); track toast.id) {
         <div class="toast" [class]="'toast-' + toast.type">
           <span class="toast-message">{{ toast.message }}</span>
+          @if (toast.action) {
+            <button class="toast-action" (click)="toast.action.callback(); toastService.dismiss(toast.id)">{{ toast.action.label }}</button>
+          }
           <button class="toast-close" (click)="toastService.dismiss(toast.id)">&times;</button>
         </div>
       }
@@ -71,6 +74,22 @@ import { ToastService } from '../services/toast.service';
     }
     .toast-close:hover {
       opacity: 1;
+    }
+    .toast-action {
+      background: none;
+      border: none;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.85em;
+      cursor: pointer;
+      color: inherit;
+      padding: 4px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+      letter-spacing: 0.5px;
+    }
+    .toast-action:hover {
+      background: rgba(255,255,255,0.15);
     }
     @keyframes slideDown {
       from { opacity: 0; transform: translateY(-12px); }

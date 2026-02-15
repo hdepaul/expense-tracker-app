@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit, computed, ViewChild, ElementRef, AfterViewChecked, effect } from '@angular/core';
+import { Component, inject, signal, OnInit, OnDestroy, computed, ViewChild, ElementRef, AfterViewChecked, effect } from '@angular/core';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { DatePipe, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -7,12 +7,11 @@ import { ExpenseService } from '../../services/expense.service';
 import { AIService } from '../../services/ai.service';
 import { ToastService } from '../../services/toast.service';
 import { Expense, CategorySummary, ChatMessage } from '../../models/expense.model';
-import { ConfirmModalComponent } from '../../components/confirm-modal.component';
 
 @Component({
   selector: 'app-expense-list',
   standalone: true,
-  imports: [RouterLink, DatePipe, CurrencyPipe, FormsModule, TranslateModule, ConfirmModalComponent],
+  imports: [RouterLink, DatePipe, CurrencyPipe, FormsModule, TranslateModule],
   template: `
     <div class="expenses-container">
 
@@ -103,8 +102,9 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       }
 
       <div class="expense-list" (click)="closeSwipe()">
-        @for (expense of expenses(); track expense.id) {
+        @for (expense of expenses(); track expense.id; let idx = $index) {
           <div class="expense-card"
+            [style.animation-delay]="(idx * 0.05) + 's'"
             (touchstart)="onTouchStart($event, expense)"
             (touchmove)="onTouchMove($event, expense)"
             (touchend)="onTouchEnd(expense)">
@@ -117,6 +117,9 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
               <div class="expense-info">
                 <h3>{{ expense.description }}</h3>
                 <p class="date">{{ expense.date | date:'mediumDate' }}</p>
+                @if (expense.categoryName) {
+                  <span class="category-chip">{{ 'categories.' + expense.categoryName | translate }}</span>
+                }
                 @if (expense.notes) {
                   <p class="notes">{{ expense.notes }}</p>
                 }
@@ -164,16 +167,9 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
         </div>
       }
 
-      @if (showDeleteModal()) {
-        <app-confirm-modal
-          [title]="'deleteModal.title' | translate"
-          [message]="deleteMessage()"
-          [confirmText]="'deleteModal.confirm' | translate"
-          [cancelText]="'deleteModal.cancel' | translate"
-          (confirmed)="confirmDelete()"
-          (cancelled)="cancelDelete()"
-        />
-      }
+      <a routerLink="/expenses/new" class="fab" [title]="'expenses.new' | translate">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </a>
     </div>
   `,
   styles: [`
@@ -460,6 +456,11 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       background: var(--bg-card);
       transition: background 0.3s, border-color 0.3s;
       overflow: hidden;
+      animation: fadeSlideIn 0.3s ease-out both;
+    }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     .expense-card-inner {
       display: flex;
@@ -508,6 +509,16 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       color: var(--text-muted);
       font-size: 0.85em;
       margin: 5px 0 0 0;
+    }
+    .category-chip {
+      display: inline-block;
+      font-size: 0.78em;
+      padding: 2px 10px;
+      border-radius: 12px;
+      background: var(--chip-bg);
+      color: var(--chip-text);
+      border: 1px solid var(--chip-border);
+      margin-top: 4px;
     }
     .expense-amount {
       font-size: 1.3em;
@@ -600,8 +611,36 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       color: var(--text-secondary);
     }
 
+    .fab {
+      display: none;
+    }
+
     /* Mobile styles */
     @media (max-width: 768px) {
+      .fab {
+        display: flex;
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: var(--accent);
+        color: white;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        z-index: 100;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .fab:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+      }
+      .fab:active {
+        transform: scale(0.95);
+      }
       .expenses-container {
         margin: 15px auto;
         padding: 10px;
@@ -681,7 +720,7 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
     }
   `]
 })
-export class ExpenseListComponent implements OnInit, AfterViewChecked {
+export class ExpenseListComponent implements OnInit, AfterViewChecked, OnDestroy {
   Math = Math;
   private expenseService = inject(ExpenseService);
   private aiService = inject(AIService);
@@ -694,12 +733,9 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
 
   expenses = signal<Expense[]>([]);
   loading = signal(true);
-  showDeleteModal = signal(false);
-  expenseToDelete = signal<Expense | null>(null);
-  deleteMessage = computed(() => {
-    const name = this.expenseToDelete()?.description || '';
-    return this.translate.instant('deleteModal.message', { name });
-  });
+
+  // Undo delete
+  private pendingDeletes = new Map<string, { timeout: ReturnType<typeof setTimeout>; expense: Expense; index: number }>();
 
   // Pagination
   currentPage = signal(1);
@@ -956,34 +992,59 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
   }
 
   delete(expense: Expense): void {
-    this.expenseToDelete.set(expense);
-    this.showDeleteModal.set(true);
-  }
+    const list = this.expenses();
+    const index = list.findIndex(e => e.id === expense.id);
+    if (index === -1) return;
 
-  confirmDelete(): void {
-    const expense = this.expenseToDelete();
-    if (!expense) return;
+    // Optimistic removal
+    this.expenses.update(arr => arr.filter(e => e.id !== expense.id));
+    this.closeSwipe();
 
-    this.expenseService.deleteExpense(expense.id).subscribe({
-      next: () => {
-        this.closeModal();
-        this.toast.show(this.translate.instant('toast.expenseDeleted'), 'success');
-        this.loadExpenses();
-      },
-      error: () => {
-        this.toast.show(this.translate.instant('toast.deleteError'), 'error');
-        this.closeModal();
+    // Cancel any existing pending delete for this expense
+    const existing = this.pendingDeletes.get(expense.id);
+    if (existing) clearTimeout(existing.timeout);
+
+    const timeout = setTimeout(() => {
+      this.pendingDeletes.delete(expense.id);
+      this.expenseService.deleteExpense(expense.id).subscribe({
+        error: () => {
+          this.toast.show(this.translate.instant('toast.deleteError'), 'error');
+          this.loadExpenses();
+        }
+      });
+    }, 5000);
+
+    this.pendingDeletes.set(expense.id, { timeout, expense, index });
+
+    this.toast.show(this.translate.instant('toast.expenseDeleted'), 'success', {
+      duration: 5000,
+      action: {
+        label: this.translate.instant('toast.undo'),
+        callback: () => {
+          const pending = this.pendingDeletes.get(expense.id);
+          if (pending) {
+            clearTimeout(pending.timeout);
+            this.pendingDeletes.delete(expense.id);
+            // Restore expense at original position
+            this.expenses.update(arr => {
+              const restored = [...arr];
+              const insertAt = Math.min(pending.index, restored.length);
+              restored.splice(insertAt, 0, pending.expense);
+              return restored;
+            });
+          }
+        }
       }
     });
   }
 
-  cancelDelete(): void {
-    this.closeModal();
-  }
-
-  private closeModal(): void {
-    this.showDeleteModal.set(false);
-    this.expenseToDelete.set(null);
+  ngOnDestroy(): void {
+    // Flush all pending deletes immediately
+    for (const [id, { timeout }] of this.pendingDeletes) {
+      clearTimeout(timeout);
+      this.expenseService.deleteExpense(id).subscribe();
+    }
+    this.pendingDeletes.clear();
   }
 
   // Swipe methods

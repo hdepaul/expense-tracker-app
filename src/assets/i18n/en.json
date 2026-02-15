@@ -148,7 +148,8 @@
     "expenseDeleted": "Expense deleted successfully",
     "deleteError": "Failed to delete expense",
     "loadError": "Failed to load expenses",
-    "aiExpenseCreated": "Expense recorded by AI successfully"
+    "aiExpenseCreated": "Expense recorded by AI successfully",
+    "undo": "Undo"
   },
   "errors": {
     "loadExpenses": "Failed to load expenses",

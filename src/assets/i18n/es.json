@@ -148,7 +148,8 @@
     "expenseDeleted": "Gasto eliminado correctamente",
     "deleteError": "Error al eliminar el gasto",
     "loadError": "Error al cargar los gastos",
-    "aiExpenseCreated": "Gasto registrado por IA correctamente"
+    "aiExpenseCreated": "Gasto registrado por IA correctamente",
+    "undo": "Deshacer"
   },
   "errors": {
     "loadExpenses": "Error al cargar los gastos",
