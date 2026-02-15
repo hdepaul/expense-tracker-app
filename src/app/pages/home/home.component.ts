@@ -4,13 +4,14 @@ import { ExpenseService } from '../../services/expense.service';
 import { BudgetService } from '../../services/budget.service';
 import { Router, RouterLink } from '@angular/router';
 import { CurrencyPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CategorySummary } from '../../models/expense.model';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, TranslateModule, CurrencyPipe],
+  imports: [RouterLink, TranslateModule, CurrencyPipe, FormsModule],
   template: `
     @if (authService.isLoggedIn()) {
       <div class="dashboard">
@@ -40,23 +41,45 @@ import { CategorySummary } from '../../models/expense.model';
               </span>
             }
 
-            <!-- Budget bar -->
-            @if (budgetAmount() !== null) {
-              <div class="dash-budget">
-                <div class="dash-budget-label">
-                  {{ monthTotal() | currency:'USD' }} {{ 'budget.of' | translate }} {{ budgetAmount() | currency:'USD' }} ({{ budgetPercent() }}%)
-                </div>
-                <div class="dash-budget-bar">
-                  <div class="dash-budget-fill"
-                    [style.width.%]="mathMin(budgetPercent(), 100)"
-                    [class.green]="budgetPercent() < 60"
-                    [class.yellow]="budgetPercent() >= 60 && budgetPercent() < 80"
-                    [class.orange]="budgetPercent() >= 80 && budgetPercent() <= 100"
-                    [class.red]="budgetPercent() > 100">
+            <!-- Budget -->
+            <div class="dash-budget-section">
+              @if (budgetAmount() !== null) {
+                <div class="dash-budget">
+                  <div class="dash-budget-info">
+                    <span class="dash-budget-label">{{ monthTotal() | currency:'USD' }} {{ 'budget.of' | translate }} {{ budgetAmount() | currency:'USD' }} ({{ budgetPercent() }}%)</span>
+                    <span class="dash-budget-actions">
+                      <button class="btn-budget-action" (click)="startEditBudget()">&#9999;&#65039;</button>
+                      <button class="btn-budget-action" (click)="removeBudget()" [title]="'budget.remove' | translate">&#10005;</button>
+                    </span>
                   </div>
+                  <div class="dash-budget-bar">
+                    <div class="dash-budget-fill"
+                      [style.width.%]="mathMin(budgetPercent(), 100)"
+                      [class.green]="budgetPercent() < 60"
+                      [class.yellow]="budgetPercent() >= 60 && budgetPercent() < 80"
+                      [class.orange]="budgetPercent() >= 80 && budgetPercent() <= 100"
+                      [class.red]="budgetPercent() > 100">
+                    </div>
+                  </div>
+                  <span class="dash-budget-status" [class.exceeded]="monthTotal() > budgetAmount()!">
+                    @if (monthTotal() > budgetAmount()!) {
+                      {{ 'budget.exceeded' | translate:{ amount: (monthTotal() - budgetAmount()! | currency:'USD') } }}
+                    } @else {
+                      {{ 'budget.remaining' | translate:{ amount: (budgetAmount()! - monthTotal() | currency:'USD') } }}
+                    }
+                  </span>
                 </div>
-              </div>
-            }
+              } @else if (!editingBudget()) {
+                <button class="btn-set-budget" (click)="startEditBudget()">{{ 'budget.set' | translate }}</button>
+              }
+              @if (editingBudget()) {
+                <div class="dash-budget-edit">
+                  <input type="number" [(ngModel)]="budgetInput" min="1" step="100" class="budget-input" (keydown.enter)="saveBudget()" />
+                  <button class="btn-budget-save" (click)="saveBudget()" [disabled]="!budgetInput || budgetInput <= 0">{{ 'budget.save' | translate }}</button>
+                  <button class="btn-budget-cancel" (click)="editingBudget.set(false)">&#10005;</button>
+                </div>
+              }
+            </div>
 
             <!-- Top categories -->
             @if (topCategories().length > 0) {
@@ -240,14 +263,106 @@ import { CategorySummary } from '../../models/expense.model';
       background: var(--comparison-same-bg);
       color: var(--comparison-same-text);
     }
-    .dash-budget {
+    .dash-budget-section {
       margin: 16px 0 12px;
+    }
+    .dash-budget {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .dash-budget-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     .dash-budget-label {
       font-size: 1em;
       font-weight: 500;
       color: var(--text-primary);
-      margin-bottom: 8px;
+    }
+    .dash-budget-actions {
+      display: flex;
+      gap: 4px;
+    }
+    .btn-budget-action {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85em;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--text-muted);
+    }
+    .btn-budget-action:hover {
+      background: var(--btn-icon-hover);
+      color: var(--text-primary);
+    }
+    .dash-budget-status {
+      font-size: 0.95em;
+      font-weight: 500;
+      color: var(--comparison-down-text);
+    }
+    .dash-budget-status.exceeded {
+      color: var(--comparison-up-text);
+    }
+    .btn-set-budget {
+      background: none;
+      border: 1px dashed var(--text-muted);
+      color: var(--text-secondary);
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9em;
+      width: 100%;
+      transition: all 0.2s;
+    }
+    .btn-set-budget:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .dash-budget-edit {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 8px;
+    }
+    .budget-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.95em;
+      outline: none;
+      background: var(--input-bg);
+      color: var(--text-primary);
+    }
+    .budget-input:focus {
+      border-color: var(--accent);
+    }
+    .btn-budget-save {
+      padding: 8px 16px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+    .btn-budget-save:disabled {
+      background: var(--border-color);
+      cursor: not-allowed;
+    }
+    .btn-budget-cancel {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 1.1em;
+      padding: 4px 8px;
+    }
+    .btn-budget-cancel:hover {
+      color: var(--text-primary);
     }
     .dash-budget-bar {
       height: 10px;
@@ -672,6 +787,9 @@ export class HomeComponent implements OnInit {
   comparisonPercent = signal(0);
   comparisonText = signal('');
 
+  editingBudget = signal(false);
+  budgetInput: number = 0;
+
   budgetPercent(): number {
     const budget = this.budgetAmount();
     if (!budget || budget === 0) return 0;
@@ -679,6 +797,30 @@ export class HomeComponent implements OnInit {
   }
 
   mathMin(a: number, b: number): number { return Math.min(a, b); }
+
+  startEditBudget(): void {
+    this.budgetInput = this.budgetAmount() || 0;
+    this.editingBudget.set(true);
+  }
+
+  saveBudget(): void {
+    if (!this.budgetInput || this.budgetInput <= 0) return;
+    this.budgetService.setBudget(this.budgetInput).subscribe({
+      next: () => {
+        this.budgetAmount.set(this.budgetInput);
+        this.editingBudget.set(false);
+      }
+    });
+  }
+
+  removeBudget(): void {
+    this.budgetService.deleteBudget().subscribe({
+      next: () => {
+        this.budgetAmount.set(null);
+        this.editingBudget.set(false);
+      }
+    });
+  }
 
   ngOnInit(): void {
     if (this.authService.isLoggedIn()) {
