@@ -10,8 +10,13 @@ import { AuthService } from '../../services/auth.service';
   imports: [FormsModule, RouterLink, TranslateModule],
   template: `
     <div class="login-container">
-      <h2>{{ 'auth.login' | translate }}</h2>
-      <p class="login-subtitle">{{ 'auth.loginSubtitle' | translate }}</p>
+      <div class="login-header">
+        <div class="login-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        </div>
+        <h2>{{ 'auth.login' | translate }}</h2>
+        <p class="login-subtitle">{{ 'auth.loginSubtitle' | translate }}</p>
+      </div>
 
       @if (error()) {
         <div class="error">{{ error() }}</div>
@@ -57,68 +62,90 @@ import { AuthService } from '../../services/auth.service';
   `,
   styles: [`
     .login-container {
-      max-width: 400px;
+      max-width: 420px;
       margin: 50px auto;
       padding: 20px;
     }
+    .login-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .login-icon {
+      display: none;
+    }
     h2 {
       color: var(--text-heading);
+      margin-bottom: 8px;
     }
     .login-subtitle {
-      text-align: center;
       color: var(--text-secondary);
       font-size: 0.95em;
-      margin-bottom: 24px;
+      margin: 0;
       line-height: 1.5;
     }
     .form-group {
-      margin-bottom: 15px;
+      margin-bottom: 18px;
     }
     label {
       display: block;
-      margin-bottom: 5px;
+      margin-bottom: 6px;
       color: var(--text-primary);
+      font-weight: 500;
     }
     input {
       width: 100%;
-      padding: 8px;
+      padding: 12px 14px;
       box-sizing: border-box;
       background: var(--input-bg);
       color: var(--text-primary);
       border: 1px solid var(--border-color);
-      border-radius: 4px;
+      border-radius: 8px;
+      font-size: 1em;
+      transition: border-color 0.2s;
+    }
+    input:focus {
+      outline: none;
+      border-color: var(--accent);
     }
     .password-wrapper {
       position: relative;
     }
     .password-wrapper input {
-      padding-right: 40px;
+      padding-right: 44px;
     }
     .btn-eye {
       position: absolute;
-      right: 4px;
+      right: 6px;
       top: 50%;
       transform: translateY(-50%);
       background: none;
       border: none;
       color: var(--text-muted);
       cursor: pointer;
-      padding: 4px;
+      padding: 6px;
       display: flex;
       align-items: center;
       width: auto;
+      border-radius: 4px;
     }
     .btn-eye:hover {
       color: var(--text-primary);
     }
     button[type="submit"] {
       width: 100%;
-      padding: 10px;
+      padding: 14px;
       background: var(--accent);
       color: white;
       border: none;
       cursor: pointer;
-      border-radius: 4px;
+      border-radius: 8px;
+      font-size: 1em;
+      font-weight: 600;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+    button[type="submit"]:hover:not(:disabled) {
+      background: var(--accent-hover);
     }
     button[type="submit"]:disabled {
       background: var(--border-color);
@@ -126,38 +153,71 @@ import { AuthService } from '../../services/auth.service';
     .error {
       background: var(--error-bg);
       color: var(--error-text);
-      padding: 10px;
-      margin-bottom: 15px;
-      border-radius: 4px;
+      padding: 12px;
+      margin-bottom: 18px;
+      border-radius: 8px;
+      font-size: 0.95em;
     }
     p {
       text-align: center;
-      margin-top: 20px;
-      color: var(--text-primary);
+      margin-top: 24px;
+      color: var(--text-secondary);
+      font-size: 0.95em;
+    }
+    p a {
+      color: var(--accent);
+      font-weight: 500;
     }
 
     /* Mobile styles */
     @media (max-width: 768px) {
       .login-container {
-        margin: 20px 15px;
-        padding: 20px;
+        margin: 24px 16px;
+        padding: 28px 20px;
         background: var(--bg-card);
-        border-radius: 8px;
-        box-shadow: 0 2px 8px var(--shadow-md);
+        border-radius: 16px;
+        box-shadow: 0 2px 12px var(--shadow-md);
+      }
+      .login-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 64px;
+        height: 64px;
+        background: var(--accent-bg);
+        border-radius: 50%;
+        color: var(--accent);
+        margin-bottom: 16px;
       }
       h2 {
         text-align: center;
-        margin-bottom: 25px;
+        font-size: 1.5em;
+        margin-bottom: 8px;
+      }
+      .login-subtitle {
+        font-size: 0.9em;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      label {
+        font-size: 0.95em;
+        margin-bottom: 8px;
       }
       input {
-        padding: 12px;
+        padding: 14px 16px;
         font-size: 16px;
+        border-radius: 10px;
       }
-      button {
-        padding: 14px;
+      button[type="submit"] {
+        padding: 16px;
+        font-size: 1.05em;
+        border-radius: 10px;
+        margin-top: 12px;
+      }
+      p {
+        margin-top: 28px;
         font-size: 1em;
-        border-radius: 4px;
-        margin-top: 10px;
       }
     }
   `]
