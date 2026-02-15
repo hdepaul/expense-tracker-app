@@ -12,6 +12,7 @@ export class AIService {
   private apiUrl = `${environment.apiUrl}/ai`;
 
   chat(message: string, history: ChatMessage[]): Observable<ChatResponse> {
-    return this.http.post<ChatResponse>(`${this.apiUrl}/chat`, { message, history });
+    const timezoneOffset = new Date().getTimezoneOffset();
+    return this.http.post<ChatResponse>(`${this.apiUrl}/chat`, { message, history, timezoneOffset });
   }
 }

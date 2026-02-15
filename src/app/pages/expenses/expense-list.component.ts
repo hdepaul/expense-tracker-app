@@ -195,23 +195,31 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
         }
       </div>
 
-      @if (totalPages() > 1) {
+      @if (!loading() && totalCount() > 0) {
         <div class="pagination">
-          <button
-            (click)="previousPage()"
-            [disabled]="!hasPreviousPage()"
-            class="btn-page">
-            {{ 'expenses.previous' | translate }}
-          </button>
+          @if (totalPages() > 1) {
+            <button
+              (click)="previousPage()"
+              [disabled]="!hasPreviousPage()"
+              class="btn-page">
+              {{ 'expenses.previous' | translate }}
+            </button>
+          }
           <span class="page-info">
-            {{ 'expenses.page' | translate }} {{ currentPage() }} {{ 'expenses.of' | translate }} {{ totalPages() }} ({{ totalCount() }} {{ 'expenses.items' | translate }})
+            @if (totalPages() > 1) {
+              {{ 'expenses.page' | translate }} {{ currentPage() }} {{ 'expenses.of' | translate }} {{ totalPages() }} ({{ totalCount() }} {{ 'expenses.items' | translate }})
+            } @else {
+              {{ totalCount() }} {{ 'expenses.items' | translate }}
+            }
           </span>
-          <button
-            (click)="nextPage()"
-            [disabled]="!hasNextPage()"
-            class="btn-page">
-            {{ 'expenses.next' | translate }}
-          </button>
+          @if (totalPages() > 1) {
+            <button
+              (click)="nextPage()"
+              [disabled]="!hasNextPage()"
+              class="btn-page">
+              {{ 'expenses.next' | translate }}
+            </button>
+          }
         </div>
       }
 
