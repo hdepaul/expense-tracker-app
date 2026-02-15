@@ -348,7 +348,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       .navbar.logged-in .nav-toolbar {
         margin-top: 0;
         margin-left: 0;
-        gap: 4px;
+        gap: 6px;
       }
       .navbar.logged-in .nav-toolbar .btn-share,
       .navbar.logged-in .nav-toolbar .btn-install,
@@ -356,12 +356,26 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       .navbar.logged-in .nav-toolbar .btn-lang {
         flex: none;
         border: none;
-        padding: 6px;
+        padding: 8px;
+      }
+      .navbar.logged-in .nav-toolbar .btn-share svg,
+      .navbar.logged-in .nav-toolbar .btn-install svg,
+      .navbar.logged-in .nav-toolbar .btn-theme svg {
+        width: 20px;
+        height: 20px;
+      }
+      .navbar.logged-in .nav-toolbar .btn-lang {
+        font-size: 0.9em;
+        font-weight: 600;
       }
       .navbar.logged-in .btn-logout-icon {
         display: flex;
         border: none;
-        padding: 6px;
+        padding: 8px;
+      }
+      .navbar.logged-in .btn-logout-icon svg {
+        width: 20px;
+        height: 20px;
       }
       .navbar.logged-in .brand {
         flex-shrink: 1;

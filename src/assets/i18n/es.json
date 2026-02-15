@@ -94,7 +94,8 @@
     "fillRequired": "Por favor completá todos los campos requeridos",
     "failedSave": "Error al guardar el gasto",
     "failedLoad": "Error al cargar el gasto",
-    "failedCategories": "Error al cargar las categorías"
+    "failedCategories": "Error al cargar las categorías",
+    "categoryHelpTitle": "Categorías disponibles"
   },
   "deleteModal": {
     "title": "Eliminar Gasto",
@@ -172,6 +173,23 @@
     "Gym": "Gimnasio",
     "Delivery": "Delivery",
     "Other": "Otros"
+  },
+  "categoriesDesc": {
+    "Restaurants": "Salir a comer, café, bar",
+    "Groceries": "Supermercado, almacén",
+    "Transportation": "Colectivo, subte, Uber, taxi",
+    "Housing": "Alquiler, expensas, mantenimiento",
+    "Entertainment": "Cine, juegos, streaming, salidas",
+    "Shopping": "Ropa, electrónica, artículos personales",
+    "Healthcare": "Médico, farmacia, odontología",
+    "Taxes": "AFIP, TGI, monotributo, impuestos",
+    "Services": "Agua, gas, luz, internet, teléfono",
+    "Subscriptions": "Spotify, Netflix, software, membresías",
+    "Credit Card": "Pagos y resúmenes de tarjeta",
+    "Nafta": "Combustible y gastos del vehículo",
+    "Gym": "Gimnasio y fitness",
+    "Delivery": "PedidosYa, Rappi, delivery de comida",
+    "Other": "Otros gastos varios"
   },
   "onboarding": {
     "step1Title": "Escribí o dictá tus gastos",

@@ -53,7 +53,23 @@ import { Category } from '../../models/expense.model';
         </div>
 
         <div class="form-group">
-          <label for="category">{{ 'expenseForm.category' | translate }}</label>
+          <div class="label-row">
+            <label for="category">{{ 'expenseForm.category' | translate }}</label>
+            <button type="button" class="btn-category-help" (click)="showCategoryHelp.set(!showCategoryHelp())" [title]="'expenseForm.categoryHelpTitle' | translate">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </button>
+          </div>
+          @if (showCategoryHelp()) {
+            <div class="category-help">
+              <div class="category-help-title">{{ 'expenseForm.categoryHelpTitle' | translate }}</div>
+              @for (cat of categories(); track cat.id) {
+                <button type="button" class="category-help-item" (click)="categoryId = cat.id; showCategoryHelp.set(false)">
+                  <span class="category-help-name">{{ 'categories.' + cat.name | translate }}</span>
+                  <span class="category-help-desc">{{ 'categoriesDesc.' + cat.name | translate }}</span>
+                </button>
+              }
+            </div>
+          }
           <select id="category" [(ngModel)]="categoryId" name="category" required>
             <option value="">{{ 'expenseForm.selectCategory' | translate }}</option>
             @for (cat of categories(); track cat.id) {
@@ -134,6 +150,73 @@ import { Category } from '../../models/expense.model';
       text-align: center;
       border-radius: 4px;
     }
+    .label-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
+    }
+    .label-row label {
+      margin-bottom: 0;
+    }
+    .btn-category-help {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 2px;
+      display: flex;
+      align-items: center;
+      border-radius: 50%;
+      transition: color 0.2s;
+    }
+    .btn-category-help:hover {
+      color: var(--accent);
+    }
+    .category-help {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+      max-height: 280px;
+      overflow-y: auto;
+      animation: fadeIn 0.2s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+    .category-help-title {
+      font-size: 0.8em;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .category-help-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      padding: 8px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .category-help-item:hover {
+      background: var(--accent-bg);
+    }
+    .category-help-name {
+      font-size: 0.95em;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    .category-help-desc {
+      font-size: 0.82em;
+      color: var(--text-muted);
+    }
     .error {
       background: var(--error-bg);
       color: var(--error-text);
@@ -182,6 +265,7 @@ export class ExpenseFormComponent implements OnInit {
   loading = signal(false);
   error = signal('');
   isEdit = signal(false);
+  showCategoryHelp = signal(false);
   expenseId = '';
   returnPage = 1;
 

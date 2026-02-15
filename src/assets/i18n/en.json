@@ -94,7 +94,8 @@
     "fillRequired": "Please fill all required fields",
     "failedSave": "Failed to save expense",
     "failedLoad": "Failed to load expense",
-    "failedCategories": "Failed to load categories"
+    "failedCategories": "Failed to load categories",
+    "categoryHelpTitle": "Available categories"
   },
   "deleteModal": {
     "title": "Delete Expense",
@@ -172,6 +173,23 @@
     "Gym": "Gym",
     "Delivery": "Delivery",
     "Other": "Other"
+  },
+  "categoriesDesc": {
+    "Restaurants": "Eating out, coffee, bars",
+    "Groceries": "Supermarket, food supplies",
+    "Transportation": "Bus, subway, Uber, taxi",
+    "Housing": "Rent, mortgage, maintenance",
+    "Entertainment": "Movies, games, streaming, outings",
+    "Shopping": "Clothing, electronics, personal items",
+    "Healthcare": "Doctor, pharmacy, dental",
+    "Taxes": "Income tax, property tax, gov fees",
+    "Services": "Water, gas, electricity, internet, phone",
+    "Subscriptions": "Spotify, Netflix, software, memberships",
+    "Credit Card": "Card payments and statements",
+    "Nafta": "Fuel and vehicle expenses",
+    "Gym": "Gym memberships and fitness",
+    "Delivery": "Food delivery services",
+    "Other": "Miscellaneous expenses"
   },
   "onboarding": {
     "step1Title": "Type or dictate your expenses",
