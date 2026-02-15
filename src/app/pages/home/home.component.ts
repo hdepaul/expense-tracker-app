@@ -98,6 +98,35 @@ import { CategorySummary } from '../../models/expense.model';
           }
         </div>
 
+        <!-- Weekly summary -->
+        <div class="dash-card dash-week">
+          <div class="dash-card-header">
+            <span>{{ 'home.lastWeek' | translate }}</span>
+          </div>
+          @if (weekLoading()) {
+            <div class="skeleton-block">
+              <div class="skeleton-line skeleton-lg"></div>
+              <div class="skeleton-line skeleton-sm"></div>
+            </div>
+          } @else if (weekTotal() === 0) {
+            <p class="dash-week-empty">{{ 'home.noExpensesLastWeek' | translate }}</p>
+          } @else {
+            <div class="dash-week-content">
+              <div class="dash-week-main">
+                <span class="dash-week-total">{{ weekTotal() | currency:'USD' }}</span>
+                <span class="dash-week-count">{{ 'home.expenses_count' | translate:{ count: weekCount() } }}</span>
+              </div>
+              @if (weekCategories().length > 0) {
+                <div class="dash-week-cats">
+                  @for (cat of weekCategories(); track cat.categoryName) {
+                    <span class="dash-week-chip">{{ 'categories.' + cat.categoryName | translate }}</span>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+
         <!-- Quick actions -->
         <div class="dash-actions">
           <a routerLink="/expenses" class="dash-action-card">
@@ -416,6 +445,49 @@ import { CategorySummary } from '../../models/expense.model';
       color: var(--text-primary);
       font-size: 0.95em;
     }
+    /* Weekly summary */
+    .dash-week-empty {
+      color: var(--text-muted);
+      font-size: 0.9em;
+      margin: 0;
+      padding: 8px 0;
+    }
+    .dash-week-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .dash-week-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .dash-week-total {
+      font-size: 1.5em;
+      font-weight: 700;
+      color: var(--text-heading);
+    }
+    .dash-week-count {
+      font-size: 0.85em;
+      color: var(--text-muted);
+    }
+    .dash-week-cats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+    .dash-week-chip {
+      font-size: 0.78em;
+      padding: 3px 10px;
+      border-radius: 12px;
+      background: var(--chip-bg);
+      color: var(--chip-text);
+      border: 1px solid var(--chip-border);
+      white-space: nowrap;
+    }
+
     .dash-actions {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -800,6 +872,12 @@ export class HomeComponent implements OnInit {
   comparisonPercent = signal(0);
   comparisonText = signal('');
 
+  // Weekly summary
+  weekTotal = signal(0);
+  weekCount = signal(0);
+  weekCategories = signal<CategorySummary[]>([]);
+  weekLoading = signal(false);
+
   editingBudget = signal(false);
   budgetInput: number = 0;
 
@@ -891,6 +969,28 @@ export class HomeComponent implements OnInit {
     // Load budget
     this.budgetService.getBudget().subscribe({
       next: (budget) => this.budgetAmount.set(budget?.amount ?? null)
+    });
+
+    // Load last week summary (Monday to Sunday)
+    this.weekLoading.set(true);
+    const today = new Date();
+    const dayOfWeek = today.getDay(); // 0=Sun, 1=Mon...
+    const lastSunday = new Date(today);
+    lastSunday.setDate(today.getDate() - (dayOfWeek === 0 ? 7 : dayOfWeek));
+    const lastMonday = new Date(lastSunday);
+    lastMonday.setDate(lastSunday.getDate() - 6);
+
+    const weekFrom = `${lastMonday.getFullYear()}-${String(lastMonday.getMonth() + 1).padStart(2, '0')}-${String(lastMonday.getDate()).padStart(2, '0')}`;
+    const weekTo = `${lastSunday.getFullYear()}-${String(lastSunday.getMonth() + 1).padStart(2, '0')}-${String(lastSunday.getDate()).padStart(2, '0')}`;
+
+    this.expenseService.getExpenses(1, 1, weekFrom, weekTo).subscribe({
+      next: (result) => {
+        this.weekTotal.set(result.totalAmount);
+        this.weekCount.set(result.totalCount);
+        this.weekCategories.set(result.byCategory.slice(0, 3));
+        this.weekLoading.set(false);
+      },
+      error: () => this.weekLoading.set(false)
     });
   }
 
