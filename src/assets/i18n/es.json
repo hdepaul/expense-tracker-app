@@ -9,7 +9,9 @@
     "login": "Ingresar",
     "register": "Registrarse",
     "logout": "Salir",
-    "admin": "Admin"
+    "admin": "Admin",
+    "darkMode": "Modo oscuro",
+    "lightMode": "Modo claro"
   },
   "home": {
     "welcome": "Hola",

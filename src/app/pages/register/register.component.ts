@@ -120,17 +120,25 @@ import { AuthService } from '../../services/auth.service';
       margin: 50px auto;
       padding: 20px;
     }
+    h2 {
+      color: var(--text-heading);
+    }
     .form-group {
       margin-bottom: 15px;
     }
     label {
       display: block;
       margin-bottom: 5px;
+      color: var(--text-primary);
     }
     input {
       width: 100%;
       padding: 8px;
       box-sizing: border-box;
+      background: var(--input-bg);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
     }
     .password-wrapper {
       position: relative;
@@ -145,7 +153,7 @@ import { AuthService } from '../../services/auth.service';
       transform: translateY(-50%);
       background: none;
       border: none;
-      color: #999;
+      color: var(--text-muted);
       cursor: pointer;
       padding: 4px;
       display: flex;
@@ -153,22 +161,23 @@ import { AuthService } from '../../services/auth.service';
       width: auto;
     }
     .btn-eye:hover {
-      color: #333;
+      color: var(--text-primary);
     }
     button[type="submit"] {
       width: 100%;
       padding: 10px;
-      background: #28a745;
+      background: var(--success);
       color: white;
       border: none;
       cursor: pointer;
+      border-radius: 4px;
     }
     button[type="submit"]:disabled {
-      background: #ccc;
+      background: var(--border-color);
     }
     .error {
-      background: #f8d7da;
-      color: #721c24;
+      background: var(--error-bg);
+      color: var(--error-text);
       padding: 10px;
       margin-bottom: 15px;
       border-radius: 4px;
@@ -180,23 +189,23 @@ import { AuthService } from '../../services/auth.service';
       font-size: 0.82em;
     }
     .password-hints li {
-      color: #999;
+      color: var(--text-muted);
       padding: 2px 0;
       transition: color 0.2s;
     }
     .password-hints li::before {
-      content: '✕ ';
-      color: #dc3545;
+      content: '\\2715 ';
+      color: var(--danger);
     }
     .password-hints li.valid {
-      color: #28a745;
+      color: var(--success);
     }
     .password-hints li.valid::before {
-      content: '✓ ';
-      color: #28a745;
+      content: '\\2713 ';
+      color: var(--success);
     }
     .field-error {
-      color: #dc3545;
+      color: var(--danger);
       font-size: 0.85em;
       margin-top: 4px;
       display: block;
@@ -204,6 +213,7 @@ import { AuthService } from '../../services/auth.service';
     p {
       text-align: center;
       margin-top: 20px;
+      color: var(--text-primary);
     }
 
     /* Mobile styles */
@@ -211,9 +221,9 @@ import { AuthService } from '../../services/auth.service';
       .register-container {
         margin: 20px 15px;
         padding: 20px;
-        background: white;
+        background: var(--bg-card);
         border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 8px var(--shadow-md);
       }
       h2 {
         text-align: center;
@@ -222,8 +232,6 @@ import { AuthService } from '../../services/auth.service';
       input {
         padding: 12px;
         font-size: 16px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
       }
       button {
         padding: 14px;

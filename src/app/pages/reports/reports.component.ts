@@ -79,6 +79,9 @@ import { CategorySummary } from '../../models/expense.model';
       align-items: center;
       margin-bottom: 30px;
     }
+    .header h2 {
+      color: var(--text-heading);
+    }
     .month-nav {
       display: flex;
       align-items: center;
@@ -88,20 +91,20 @@ import { CategorySummary } from '../../models/expense.model';
       width: 36px;
       height: 36px;
       border-radius: 50%;
-      border: 1px solid #ddd;
-      background: white;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
       font-size: 1.3em;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #333;
+      color: var(--text-primary);
       transition: all 0.2s;
     }
     .btn-month-arrow:hover:not(:disabled) {
-      background: #007bff;
+      background: var(--accent);
       color: white;
-      border-color: #007bff;
+      border-color: var(--accent);
     }
     .btn-month-arrow:disabled {
       opacity: 0.3;
@@ -109,20 +112,20 @@ import { CategorySummary } from '../../models/expense.model';
     }
     .btn-month-label {
       padding: 8px 16px;
-      border: 1px solid #ddd;
+      border: 1px solid var(--border-color);
       border-radius: 20px;
-      background: white;
+      background: var(--bg-card);
       font-size: 0.9em;
       font-weight: 500;
       cursor: pointer;
-      color: #333;
+      color: var(--text-primary);
       min-width: 140px;
       text-align: center;
       transition: all 0.2s;
     }
     .btn-month-label:hover {
-      border-color: #007bff;
-      color: #007bff;
+      border-color: var(--accent);
+      color: var(--accent);
     }
     .chart-section {
       display: grid;
@@ -131,15 +134,17 @@ import { CategorySummary } from '../../models/expense.model';
       align-items: start;
     }
     .chart-container {
-      background: white;
+      background: var(--bg-card);
       padding: 20px;
       border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 8px var(--shadow-md);
+      transition: background 0.3s;
     }
     .summary-section {
-      background: #f8f9fa;
+      background: var(--bg-card-alt);
       padding: 20px;
       border-radius: 8px;
+      transition: background 0.3s;
     }
     .total-card {
       display: flex;
@@ -147,11 +152,12 @@ import { CategorySummary } from '../../models/expense.model';
       justify-content: space-between;
       align-items: center;
       padding: 15px;
-      background: white;
+      background: var(--bg-card);
       border-radius: 8px;
       margin-bottom: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 4px var(--shadow);
       gap: 8px;
+      transition: background 0.3s;
     }
     .comparison-badge {
       font-size: 0.8em;
@@ -162,25 +168,26 @@ import { CategorySummary } from '../../models/expense.model';
       text-align: center;
     }
     .comparison-badge.up {
-      background: #fee2e2;
-      color: #dc2626;
+      background: var(--comparison-up-bg);
+      color: var(--comparison-up-text);
     }
     .comparison-badge.down {
-      background: #dcfce7;
-      color: #16a34a;
+      background: var(--comparison-down-bg);
+      color: var(--comparison-down-text);
     }
     .comparison-badge.same {
-      background: #f3f4f6;
-      color: #6b7280;
+      background: var(--comparison-same-bg);
+      color: var(--comparison-same-text);
     }
     .total-label {
       font-size: 1.1em;
       font-weight: 600;
+      color: var(--text-primary);
     }
     .total-amount {
       font-size: 1.3em;
       font-weight: bold;
-      color: #dc3545;
+      color: var(--danger);
     }
     .category-list {
       display: flex;
@@ -192,8 +199,9 @@ import { CategorySummary } from '../../models/expense.model';
       align-items: center;
       gap: 10px;
       padding: 10px;
-      background: white;
+      background: var(--bg-card);
       border-radius: 4px;
+      transition: background 0.3s;
     }
     .color-dot {
       width: 12px;
@@ -202,23 +210,23 @@ import { CategorySummary } from '../../models/expense.model';
     }
     .cat-name {
       flex: 1;
-      color: #333;
+      color: var(--text-primary);
     }
     .cat-amount {
       font-weight: 600;
-      color: #333;
+      color: var(--text-primary);
     }
     .cat-percent {
-      color: #666;
+      color: var(--text-secondary);
       font-size: 0.9em;
       min-width: 45px;
       text-align: right;
     }
     .empty {
       text-align: center;
-      color: #666;
+      color: var(--text-secondary);
       padding: 60px;
-      background: #f8f9fa;
+      background: var(--bg-card-alt);
       border-radius: 8px;
     }
     @media (max-width: 768px) {

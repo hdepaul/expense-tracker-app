@@ -44,15 +44,15 @@ import { DatePipe } from '@angular/common';
     }
     h2 {
       margin-bottom: 20px;
-      color: #333;
+      color: var(--text-heading);
     }
     .loading, .no-data {
       text-align: center;
-      color: #888;
+      color: var(--text-muted);
       padding: 40px 0;
     }
     .total {
-      color: #666;
+      color: var(--text-secondary);
       margin-bottom: 20px;
       font-size: 0.95em;
     }
@@ -65,14 +65,14 @@ import { DatePipe } from '@angular/common';
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: white;
-      border: 1px solid #e0e0e0;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
       border-radius: 8px;
       padding: 16px 20px;
-      transition: box-shadow 0.2s;
+      transition: box-shadow 0.2s, background 0.3s;
     }
     .user-card:hover {
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 8px var(--shadow);
     }
     .user-info {
       display: flex;
@@ -81,14 +81,14 @@ import { DatePipe } from '@angular/common';
     }
     .user-name {
       font-weight: 600;
-      color: #333;
+      color: var(--text-primary);
     }
     .user-email {
-      color: #666;
+      color: var(--text-secondary);
       font-size: 0.9em;
     }
     .user-date {
-      color: #999;
+      color: var(--text-muted);
       font-size: 0.82em;
     }
     .ai-usage {
@@ -97,25 +97,25 @@ import { DatePipe } from '@angular/common';
       align-items: center;
       gap: 4px;
       padding: 8px 16px;
-      background: #f0fdf4;
+      background: var(--ai-usage-bg);
       border-radius: 8px;
       min-width: 80px;
     }
     .usage-label {
       font-size: 0.75em;
-      color: #666;
+      color: var(--text-secondary);
       text-transform: uppercase;
     }
     .usage-count {
       font-weight: 700;
       font-size: 1.1em;
-      color: #16a34a;
+      color: var(--comparison-down-text);
     }
     .ai-usage.at-limit {
-      background: #fef2f2;
+      background: var(--ai-usage-limit-bg);
     }
     .ai-usage.at-limit .usage-count {
-      color: #dc2626;
+      color: var(--comparison-up-text);
     }
 
     @media (max-width: 600px) {

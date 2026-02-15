@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ExpenseService } from '../../services/expense.service';
 import { AIService } from '../../services/ai.service';
-import { BudgetService } from '../../services/budget.service';
 import { Expense, CategorySummary, ChatMessage } from '../../models/expense.model';
 import { ConfirmModalComponent } from '../../components/confirm-modal.component';
 
@@ -31,10 +30,10 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
               </div>
             }
           </div>
-          <button class="btn-clear-chat" (click)="clearChat()" [title]="'ai.clear' | translate">✕</button>
+          <button class="btn-clear-chat" (click)="clearChat()" [title]="'ai.clear' | translate">&#10005;</button>
         } @else {
           <div class="chat-welcome">
-            <div class="welcome-icon">💬</div>
+            <div class="welcome-icon">&#128172;</div>
             <p class="welcome-text">{{ 'ai.welcomeMessage' | translate }}</p>
             <div class="chat-chips">
               @for (chip of exampleChips; track chip) {
@@ -63,7 +62,7 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
               @if (isRecording()) {
                 <span class="mic-pulse"></span>
               }
-              <span class="mic-icon">🎙</span>
+              <span class="mic-icon">&#127908;</span>
             </button>
           }
           <button
@@ -102,78 +101,6 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
         <p class="empty">{{ 'expenses.noExpenses' | translate }}</p>
       }
 
-      @if (!loading() && expenses().length > 0) {
-        <div class="summary">
-          <div class="total-card">
-            <div class="total-row">
-              <span class="total-label">{{ 'expenses.total' | translate }}</span>
-              <span class="total-amount">{{ totalAmount() | currency:'USD' }}</span>
-            </div>
-            @if (comparisonText()) {
-              <span class="comparison-badge" [class.up]="comparisonPercent() > 0" [class.down]="comparisonPercent() < 0" [class.same]="comparisonPercent() === 0">
-                {{ comparisonText() }}
-              </span>
-            }
-          </div>
-
-          @if (!showAllTime) {
-            <div class="budget-section">
-              @if (budgetAmount() !== null) {
-                <div class="budget-bar-container">
-                  <div class="budget-info">
-                    <span class="budget-text">{{ totalAmount() | currency:'USD' }} {{ 'budget.of' | translate }} {{ budgetAmount() | currency:'USD' }} ({{ budgetPercent() }}%)</span>
-                    <span class="budget-actions-inline">
-                      <button class="btn-budget-action" (click)="startEditBudget()" title="✏️">✏️</button>
-                      <button class="btn-budget-action" (click)="removeBudget()" [title]="'budget.remove' | translate">✕</button>
-                    </span>
-                  </div>
-                  <div class="budget-bar">
-                    <div class="budget-bar-fill" [style.width.%]="Math.min(budgetPercent(), 100)"
-                      [class.green]="budgetPercent() < 60"
-                      [class.yellow]="budgetPercent() >= 60 && budgetPercent() < 80"
-                      [class.orange]="budgetPercent() >= 80 && budgetPercent() <= 100"
-                      [class.red]="budgetPercent() > 100">
-                    </div>
-                  </div>
-                  <span class="budget-status" [class.exceeded]="totalAmount() > budgetAmount()!">
-                    @if (totalAmount() > budgetAmount()!) {
-                      {{ 'budget.exceeded' | translate:{ amount: (totalAmount() - budgetAmount()! | currency:'USD') } }}
-                    } @else {
-                      {{ 'budget.remaining' | translate:{ amount: (budgetAmount()! - totalAmount() | currency:'USD') } }}
-                    }
-                  </span>
-                </div>
-              } @else if (!editingBudget()) {
-                <button class="btn-set-budget" (click)="startEditBudget()">{{ 'budget.set' | translate }}</button>
-              }
-              @if (editingBudget()) {
-                <div class="budget-edit-inline">
-                  <input type="number" [(ngModel)]="budgetInput" min="1" step="100" class="budget-input" (keydown.enter)="saveBudget()" />
-                  <button class="btn-budget-save" (click)="saveBudget()" [disabled]="!budgetInput || budgetInput <= 0">{{ 'budget.save' | translate }}</button>
-                  <button class="btn-budget-cancel" (click)="cancelEditBudget()">✕</button>
-                </div>
-              }
-            </div>
-          }
-
-          <div class="category-breakdown">
-            @for (cat of byCategory(); track cat.categoryName) {
-              <div class="category-item">
-                <span class="category-name">{{ 'categories.' + cat.categoryName | translate }}</span>
-                <div class="category-right">
-                  <span class="category-amount">{{ cat.amount | currency:'USD' }}</span>
-                  @if (getCategoryComparison(cat.categoryName); as comp) {
-                    <span class="category-comparison" [class.up]="comp.direction === 'up'" [class.down]="comp.direction === 'down'">
-                      {{ comp.direction === 'up' ? '↑' : comp.direction === 'down' ? '↓' : '' }}
-                    </span>
-                  }
-                </div>
-              </div>
-            }
-          </div>
-        </div>
-      }
-
       <div class="expense-list">
         @for (expense of expenses(); track expense.id) {
           <div class="expense-card">
@@ -188,8 +115,8 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
               {{ expense.amount | currency:'USD' }}
             </div>
             <div class="expense-actions">
-              <a [routerLink]="['/expenses', expense.id, 'edit']" [queryParams]="{page: currentPage()}" class="btn-icon" [title]="'expenses.edit_btn' | translate">✏️</a>
-              <button (click)="delete(expense)" class="btn-icon btn-icon-delete" [title]="'expenses.delete' | translate">🗑️</button>
+              <a [routerLink]="['/expenses', expense.id, 'edit']" [queryParams]="{page: currentPage()}" class="btn-icon" [title]="'expenses.edit_btn' | translate">&#9999;&#65039;</a>
+              <button (click)="delete(expense)" class="btn-icon btn-icon-delete" [title]="'expenses.delete' | translate">&#128465;&#65039;</button>
             </div>
           </div>
         }
@@ -244,15 +171,15 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
 
     /* AI Chat */
     .ai-chat {
-      background: #f8f9fa;
-      border: 1px solid #e0e0e0;
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border-color);
       border-radius: 12px;
-      padding: 16px;
+      padding: 20px;
       margin-bottom: 24px;
       position: relative;
     }
     .chat-messages {
-      max-height: 220px;
+      max-height: 350px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
@@ -270,16 +197,16 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
     }
     .chat-bubble.user {
       align-self: flex-end;
-      background: #007bff;
+      background: var(--accent);
       color: white;
       border-bottom-right-radius: 4px;
     }
     .chat-bubble.assistant {
       align-self: flex-start;
-      background: #ffffff;
-      color: #333;
+      background: var(--bg-card);
+      color: var(--text-primary);
       white-space: pre-wrap;
-      border: 1px solid #e0e0e0;
+      border: 1px solid var(--border-color);
       border-bottom-left-radius: 4px;
     }
     .loading-bubble {
@@ -290,7 +217,7 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: #999;
+      background: var(--text-muted);
       animation: dotTyping 1.4s infinite;
       position: relative;
     }
@@ -303,7 +230,7 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: #999;
+      background: var(--text-muted);
     }
     .dot-typing::before {
       left: -10px;
@@ -324,76 +251,79 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       background: none;
       border: none;
       font-size: 1.1em;
-      color: #999;
+      color: var(--text-muted);
       cursor: pointer;
       padding: 4px 8px;
       border-radius: 50%;
     }
     .btn-clear-chat:hover {
-      background: #e0e0e0;
-      color: #333;
+      background: var(--btn-icon-hover);
+      color: var(--text-primary);
     }
     .chat-welcome {
       text-align: center;
-      padding: 8px 0 12px;
+      padding: 16px 0 20px;
     }
     .welcome-icon {
-      font-size: 2em;
-      margin-bottom: 4px;
+      font-size: 2.5em;
+      margin-bottom: 8px;
     }
     .welcome-text {
-      color: #666;
-      font-size: 0.95em;
-      margin-bottom: 12px;
+      color: var(--text-secondary);
+      font-size: 1em;
+      margin-bottom: 16px;
       line-height: 1.4;
     }
     .chat-chips {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 10px;
       justify-content: center;
     }
     .chip {
-      background: #e8f0fe;
-      color: #1a73e8;
-      border: 1px solid #d2e3fc;
+      background: var(--chip-bg);
+      color: var(--chip-text);
+      border: 1px solid var(--chip-border);
       border-radius: 20px;
-      padding: 6px 14px;
-      font-size: 0.85em;
+      padding: 8px 16px;
+      font-size: 0.88em;
       cursor: pointer;
       transition: all 0.2s;
       white-space: nowrap;
     }
     .chip:hover {
-      background: #1a73e8;
+      background: var(--accent);
       color: white;
-      border-color: #1a73e8;
+      border-color: var(--accent);
     }
     .chat-input-bar {
       display: flex;
       gap: 8px;
+      padding-top: 4px;
     }
     .chat-input {
       flex: 1;
-      padding: 10px 14px;
-      border: 1px solid #ddd;
+      padding: 12px 16px;
+      border: 1px solid var(--border-color);
       border-radius: 24px;
       font-size: 0.95em;
       outline: none;
       transition: border-color 0.2s;
+      background: var(--input-bg);
+      color: var(--text-primary);
     }
     .chat-input:focus {
-      border-color: #007bff;
+      border-color: var(--accent);
     }
     .chat-input:disabled {
-      background: #f0f0f0;
+      background: var(--input-disabled-bg);
     }
     .btn-mic {
       width: 46px;
       height: 46px;
       border-radius: 50%;
-      border: 2px solid #007bff;
-      background: white;
+      border: 2px solid var(--accent);
+      background: var(--bg-card);
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -407,11 +337,11 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       line-height: 1;
     }
     .btn-mic:hover {
-      background: #e8f0fe;
+      background: var(--accent-bg);
     }
     .btn-mic.recording {
-      background: #dc3545;
-      border-color: #dc3545;
+      background: var(--danger);
+      border-color: var(--danger);
     }
     .btn-mic:disabled {
       opacity: 0.5;
@@ -421,7 +351,7 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       position: absolute;
       inset: -4px;
       border-radius: 50%;
-      border: 2px solid #dc3545;
+      border: 2px solid var(--danger);
       animation: micPulse 1.2s infinite;
     }
     @keyframes micPulse {
@@ -429,12 +359,12 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       100% { transform: scale(1.4); opacity: 0; }
     }
     .chat-input.recording {
-      border-color: #dc3545;
-      background: #fff5f5;
+      border-color: var(--danger);
+      background: var(--comparison-up-bg);
     }
     .btn-send {
       padding: 10px 20px;
-      background: #007bff;
+      background: var(--accent);
       color: white;
       border: none;
       border-radius: 24px;
@@ -443,11 +373,11 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       white-space: nowrap;
     }
     .btn-send:disabled {
-      background: #b0c4de;
+      background: var(--border-color);
       cursor: not-allowed;
     }
     .btn-send:not(:disabled):hover {
-      background: #0056b3;
+      background: var(--accent-hover);
     }
 
     .header {
@@ -455,6 +385,9 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
+    }
+    .header h2 {
+      color: var(--text-heading);
     }
     .month-nav {
       display: flex;
@@ -465,20 +398,20 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       width: 36px;
       height: 36px;
       border-radius: 50%;
-      border: 1px solid #ddd;
-      background: white;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
       font-size: 1.3em;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #333;
+      color: var(--text-primary);
       transition: all 0.2s;
     }
     .btn-month-arrow:hover:not(:disabled) {
-      background: #007bff;
+      background: var(--accent);
       color: white;
-      border-color: #007bff;
+      border-color: var(--accent);
     }
     .btn-month-arrow:disabled {
       opacity: 0.3;
@@ -486,20 +419,20 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
     }
     .btn-month-label {
       padding: 8px 16px;
-      border: 1px solid #ddd;
+      border: 1px solid var(--border-color);
       border-radius: 20px;
-      background: white;
+      background: var(--bg-card);
       font-size: 0.9em;
       font-weight: 500;
       cursor: pointer;
-      color: #333;
+      color: var(--text-primary);
       min-width: 140px;
       text-align: center;
       transition: all 0.2s;
     }
     .btn-month-label:hover {
-      border-color: #007bff;
-      color: #007bff;
+      border-color: var(--accent);
+      color: var(--accent);
     }
     .expense-list {
       display: flex;
@@ -510,30 +443,32 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       display: flex;
       align-items: center;
       padding: 15px;
-      border: 1px solid #ddd;
+      border: 1px solid var(--border-color);
       border-radius: 8px;
-      background: #fff;
+      background: var(--bg-card);
+      transition: background 0.3s, border-color 0.3s;
     }
     .expense-info {
       flex: 1;
     }
     .expense-info h3 {
       margin: 0 0 5px 0;
+      color: var(--text-heading);
     }
     .date {
-      color: #666;
+      color: var(--text-secondary);
       font-size: 0.9em;
       margin: 0;
     }
     .notes {
-      color: #888;
+      color: var(--text-muted);
       font-size: 0.85em;
       margin: 5px 0 0 0;
     }
     .expense-amount {
       font-size: 1.3em;
       font-weight: bold;
-      color: #dc3545;
+      color: var(--danger);
       margin-right: 20px;
     }
     .expense-actions {
@@ -545,7 +480,7 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       height: 36px;
       border-radius: 8px;
       border: none;
-      background: #f0f0f0;
+      background: var(--btn-icon-bg);
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -555,217 +490,22 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       transition: background 0.2s;
     }
     .btn-icon:hover {
-      background: #e0e0e0;
+      background: var(--btn-icon-hover);
     }
     .btn-icon-delete:hover {
-      background: #fee2e2;
+      background: var(--comparison-up-bg);
     }
     .error {
-      color: #dc3545;
-      background: #f8d7da;
+      color: var(--error-text);
+      background: var(--error-bg);
       padding: 10px;
       border-radius: 4px;
     }
     .empty {
       text-align: center;
-      color: #666;
+      color: var(--text-secondary);
       padding: 40px;
     }
-    .summary {
-      background: #f8f9fa;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-    .total-card {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      padding-bottom: 15px;
-      border-bottom: 2px solid #dee2e6;
-      margin-bottom: 15px;
-    }
-    .total-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .total-label {
-      font-size: 1.2em;
-      font-weight: 600;
-      color: #333;
-    }
-    .total-amount {
-      font-size: 1.5em;
-      font-weight: bold;
-      color: #dc3545;
-    }
-    .comparison-badge {
-      font-size: 0.85em;
-      font-weight: 500;
-      padding: 3px 10px;
-      border-radius: 12px;
-      align-self: flex-end;
-    }
-    .comparison-badge.up {
-      background: #fee2e2;
-      color: #dc2626;
-    }
-    .comparison-badge.down {
-      background: #dcfce7;
-      color: #16a34a;
-    }
-    .comparison-badge.same {
-      background: #f3f4f6;
-      color: #6b7280;
-    }
-    .budget-section {
-      margin-bottom: 15px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid #e5e7eb;
-    }
-    .budget-bar-container {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .budget-info {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .budget-text {
-      font-size: 1.05em;
-      font-weight: 500;
-      color: #333;
-    }
-    .budget-actions-inline {
-      display: flex;
-      gap: 4px;
-    }
-    .btn-budget-action {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 0.85em;
-      padding: 2px 6px;
-      border-radius: 4px;
-      color: #888;
-    }
-    .btn-budget-action:hover {
-      background: #e5e7eb;
-      color: #333;
-    }
-    .budget-bar {
-      height: 10px;
-      background: #e5e7eb;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-    .budget-bar-fill {
-      height: 100%;
-      border-radius: 4px;
-      transition: width 0.3s ease;
-    }
-    .budget-bar-fill.green { background: #22c55e; }
-    .budget-bar-fill.yellow { background: #eab308; }
-    .budget-bar-fill.orange { background: #f97316; }
-    .budget-bar-fill.red { background: #ef4444; }
-    .budget-status {
-      font-size: 0.95em;
-      font-weight: 500;
-      color: #16a34a;
-    }
-    .budget-status.exceeded {
-      color: #dc2626;
-    }
-    .btn-set-budget {
-      background: none;
-      border: 1px dashed #aaa;
-      color: #666;
-      padding: 8px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.9em;
-      width: 100%;
-      transition: all 0.2s;
-    }
-    .btn-set-budget:hover {
-      border-color: #007bff;
-      color: #007bff;
-    }
-    .budget-edit-inline {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      margin-top: 8px;
-    }
-    .budget-input {
-      flex: 1;
-      padding: 8px 12px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 0.95em;
-      outline: none;
-    }
-    .budget-input:focus {
-      border-color: #007bff;
-    }
-    .btn-budget-save {
-      padding: 8px 16px;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.9em;
-    }
-    .btn-budget-save:disabled {
-      background: #b0c4de;
-      cursor: not-allowed;
-    }
-    .btn-budget-cancel {
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: #999;
-      font-size: 1.1em;
-      padding: 4px 8px;
-    }
-    .btn-budget-cancel:hover {
-      color: #333;
-    }
-    .category-breakdown {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 10px;
-    }
-    .category-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 12px;
-      background: white;
-      border-radius: 4px;
-      border-left: 3px solid #007bff;
-    }
-    .category-name {
-      color: #666;
-    }
-    .category-right {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .category-amount {
-      font-weight: 600;
-      color: #333;
-    }
-    .category-comparison {
-      font-size: 0.8em;
-      font-weight: 600;
-    }
-    .category-comparison.up { color: #dc2626; }
-    .category-comparison.down { color: #16a34a; }
     .pagination {
       display: flex;
       justify-content: center;
@@ -773,26 +513,26 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       gap: 15px;
       margin-top: 20px;
       padding: 15px;
-      background: #f8f9fa;
+      background: var(--bg-card-alt);
       border-radius: 8px;
     }
     .btn-page {
       padding: 8px 16px;
-      background: #007bff;
+      background: var(--accent);
       color: white;
       border: none;
       border-radius: 4px;
       cursor: pointer;
     }
     .btn-page:disabled {
-      background: #ccc;
+      background: var(--border-color);
       cursor: not-allowed;
     }
     .btn-page:not(:disabled):hover {
-      background: #0056b3;
+      background: var(--accent-hover);
     }
     .page-info {
-      color: #666;
+      color: var(--text-secondary);
     }
 
     /* Mobile styles */
@@ -835,23 +575,6 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
       .expense-actions {
         gap: 8px;
       }
-      .summary {
-        padding: 15px;
-      }
-      .total-card {
-        gap: 5px;
-        text-align: center;
-      }
-      .total-row {
-        flex-direction: column;
-        gap: 5px;
-      }
-      .comparison-badge {
-        align-self: center;
-      }
-      .category-breakdown {
-        grid-template-columns: 1fr;
-      }
       .pagination {
         flex-direction: column;
         gap: 10px;
@@ -864,7 +587,7 @@ import { ConfirmModalComponent } from '../../components/confirm-modal.component'
         width: 100%;
       }
       .ai-chat {
-        padding: 12px;
+        padding: 14px;
       }
       .chat-bubble {
         max-width: 90%;
@@ -891,7 +614,6 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
   Math = Math;
   private expenseService = inject(ExpenseService);
   private aiService = inject(AIService);
-  private budgetService = inject(BudgetService);
   private route = inject(ActivatedRoute);
   private translate = inject(TranslateService);
 
@@ -925,23 +647,6 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
   private filterMonth = new Date().getMonth(); // 0-indexed
   showAllTime = false;
 
-  // Comparison with previous month
-  previousMonthTotal = signal<number | null>(null);
-  previousByCategory = signal<CategorySummary[]>([]);
-  comparisonPercent = signal<number>(0);
-  comparisonText = signal<string>('');
-
-  // Budget
-  budgetAmount = signal<number | null>(null);
-  editingBudget = signal(false);
-  budgetInput: number = 0;
-
-  budgetPercent(): number {
-    const budget = this.budgetAmount();
-    if (!budget || budget === 0) return 0;
-    return Math.round((this.totalAmount() / budget) * 100);
-  }
-
   // AI Chat
   chatMessages = signal<ChatMessage[]>([]);
   aiLoading = signal(false);
@@ -971,7 +676,6 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
     // Start showing current month
     this.selectedMonth = `${this.filterYear}-${this.filterMonth + 1}`;
     this.loadExpenses();
-    this.loadBudget();
   }
 
   ngAfterViewChecked(): void {
@@ -1087,115 +791,10 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked {
         this.totalAmount.set(result.totalAmount);
         this.byCategory.set(result.byCategory);
         this.loading.set(false);
-
-        // Load previous month for comparison
-        if (this.selectedMonth) {
-          this.loadPreviousMonth();
-        } else {
-          this.previousMonthTotal.set(null);
-          this.previousByCategory.set([]);
-          this.comparisonText.set('');
-        }
       },
       error: () => {
         this.error.set(this.translate.instant('errors.loadExpenses'));
         this.loading.set(false);
-      }
-    });
-  }
-
-  private loadPreviousMonth(): void {
-    const [year, month] = this.selectedMonth.split('-').map(Number);
-    let prevYear = year;
-    let prevMonth = month - 1;
-    if (prevMonth < 1) { prevMonth = 12; prevYear--; }
-
-    const prevFromDate = `${prevYear}-${String(prevMonth).padStart(2, '0')}-01`;
-    const lastDay = new Date(prevYear, prevMonth, 0).getDate();
-    const prevToDate = `${prevYear}-${String(prevMonth).padStart(2, '0')}-${lastDay}`;
-
-    this.expenseService.getExpenses(1, 1, prevFromDate, prevToDate).subscribe({
-      next: (result) => {
-        this.previousMonthTotal.set(result.totalAmount);
-        this.previousByCategory.set(result.byCategory);
-        this.updateComparison(result.totalAmount);
-      },
-      error: () => {
-        this.previousMonthTotal.set(null);
-        this.comparisonText.set('');
-      }
-    });
-  }
-
-  private updateComparison(prevTotal: number): void {
-    const current = this.totalAmount();
-    if (prevTotal === 0 && current === 0) {
-      this.comparisonPercent.set(0);
-      this.comparisonText.set(this.translate.instant('comparison.noData'));
-      return;
-    }
-    if (prevTotal === 0) {
-      this.comparisonPercent.set(0);
-      this.comparisonText.set(this.translate.instant('comparison.noData'));
-      return;
-    }
-    const diff = ((current - prevTotal) / prevTotal) * 100;
-    const percent = Math.abs(Math.round(diff));
-    this.comparisonPercent.set(diff);
-
-    if (diff > 0) {
-      this.comparisonText.set(this.translate.instant('comparison.more', { percent }));
-    } else if (diff < 0) {
-      this.comparisonText.set(this.translate.instant('comparison.less', { percent }));
-    } else {
-      this.comparisonText.set(this.translate.instant('comparison.same'));
-    }
-  }
-
-  getCategoryComparison(categoryName: string): { direction: 'up' | 'down' | 'same' } | null {
-    if (!this.selectedMonth || this.previousMonthTotal() === null) return null;
-    const prevCat = this.previousByCategory().find(c => c.categoryName === categoryName);
-    const currentCat = this.byCategory().find(c => c.categoryName === categoryName);
-    const prevAmount = prevCat?.amount || 0;
-    const currentAmount = currentCat?.amount || 0;
-    if (prevAmount === 0 && currentAmount === 0) return null;
-    if (currentAmount > prevAmount) return { direction: 'up' };
-    if (currentAmount < prevAmount) return { direction: 'down' };
-    return { direction: 'same' };
-  }
-
-  // Budget methods
-  private loadBudget(): void {
-    this.budgetService.getBudget().subscribe({
-      next: (budget) => this.budgetAmount.set(budget?.amount ?? null),
-      error: () => this.budgetAmount.set(null)
-    });
-  }
-
-  startEditBudget(): void {
-    this.budgetInput = this.budgetAmount() || 0;
-    this.editingBudget.set(true);
-  }
-
-  cancelEditBudget(): void {
-    this.editingBudget.set(false);
-  }
-
-  saveBudget(): void {
-    if (!this.budgetInput || this.budgetInput <= 0) return;
-    this.budgetService.setBudget(this.budgetInput).subscribe({
-      next: () => {
-        this.budgetAmount.set(this.budgetInput);
-        this.editingBudget.set(false);
-      }
-    });
-  }
-
-  removeBudget(): void {
-    this.budgetService.deleteBudget().subscribe({
-      next: () => {
-        this.budgetAmount.set(null);
-        this.editingBudget.set(false);
       }
     });
   }

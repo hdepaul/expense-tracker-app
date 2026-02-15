@@ -22,7 +22,14 @@ import { CategorySummary } from '../../models/expense.model';
             <span>{{ 'home.thisMonth' | translate }}</span>
           </div>
           @if (loading()) {
-            <p class="dash-loading">{{ 'expenses.loading' | translate }}</p>
+            <div class="skeleton-block">
+              <div class="skeleton-line skeleton-lg"></div>
+              <div class="skeleton-line skeleton-sm"></div>
+              <div class="skeleton-line skeleton-bar"></div>
+              <div class="skeleton-line skeleton-md"></div>
+              <div class="skeleton-line skeleton-md"></div>
+              <div class="skeleton-line skeleton-md"></div>
+            </div>
           } @else if (monthTotal() === 0) {
             <p class="dash-empty">{{ 'home.noExpensesThisMonth' | translate }}</p>
           } @else {
@@ -182,26 +189,27 @@ import { CategorySummary } from '../../models/expense.model';
     }
     .dash-greeting {
       font-size: 1.6em;
-      color: #1a1a1a;
+      color: var(--text-heading);
       margin-bottom: 24px;
     }
     .dash-card {
-      background: #f8f9fa;
+      background: var(--bg-card-alt);
       border-radius: 12px;
       padding: 24px;
       margin-bottom: 20px;
-      border: 1px solid #e9ecef;
+      border: 1px solid var(--border-light);
+      transition: background 0.3s, border-color 0.3s;
     }
     .dash-card-header {
       font-size: 0.9em;
-      color: #666;
+      color: var(--text-secondary);
       text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-bottom: 12px;
       font-weight: 600;
     }
-    .dash-loading, .dash-empty {
-      color: #888;
+    .dash-empty {
+      color: var(--text-muted);
       font-size: 0.95em;
       text-align: center;
       padding: 20px 0;
@@ -209,7 +217,7 @@ import { CategorySummary } from '../../models/expense.model';
     .dash-total {
       font-size: 2.2em;
       font-weight: 700;
-      color: #dc3545;
+      color: var(--danger);
       margin-bottom: 8px;
     }
     .dash-comparison {
@@ -221,16 +229,16 @@ import { CategorySummary } from '../../models/expense.model';
       margin-bottom: 16px;
     }
     .dash-comparison.up {
-      background: #fee2e2;
-      color: #dc2626;
+      background: var(--comparison-up-bg);
+      color: var(--comparison-up-text);
     }
     .dash-comparison.down {
-      background: #dcfce7;
-      color: #16a34a;
+      background: var(--comparison-down-bg);
+      color: var(--comparison-down-text);
     }
     .dash-comparison.same {
-      background: #f3f4f6;
-      color: #6b7280;
+      background: var(--comparison-same-bg);
+      color: var(--comparison-same-text);
     }
     .dash-budget {
       margin: 16px 0 12px;
@@ -238,12 +246,12 @@ import { CategorySummary } from '../../models/expense.model';
     .dash-budget-label {
       font-size: 1em;
       font-weight: 500;
-      color: #333;
+      color: var(--text-primary);
       margin-bottom: 8px;
     }
     .dash-budget-bar {
       height: 10px;
-      background: #e5e7eb;
+      background: var(--budget-bar-bg);
       border-radius: 5px;
       overflow: hidden;
     }
@@ -266,17 +274,18 @@ import { CategorySummary } from '../../models/expense.model';
       display: flex;
       justify-content: space-between;
       padding: 8px 12px;
-      background: white;
+      background: var(--bg-card);
       border-radius: 6px;
-      border-left: 3px solid #007bff;
+      border-left: 3px solid var(--accent);
+      transition: background 0.3s;
     }
     .dash-cat-name {
-      color: #555;
+      color: var(--text-secondary);
       font-size: 0.95em;
     }
     .dash-cat-amount {
       font-weight: 600;
-      color: #333;
+      color: var(--text-primary);
       font-size: 0.95em;
     }
     .dash-actions {
@@ -290,27 +299,27 @@ import { CategorySummary } from '../../models/expense.model';
       align-items: center;
       gap: 10px;
       padding: 24px 16px;
-      background: white;
-      border: 1px solid #e9ecef;
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
       border-radius: 12px;
       text-decoration: none;
-      color: #333;
+      color: var(--text-primary);
       font-weight: 500;
       font-size: 0.9em;
       transition: all 0.2s;
       cursor: pointer;
     }
     .dash-action-card:hover {
-      border-color: #007bff;
-      color: #007bff;
-      box-shadow: 0 2px 8px rgba(0,123,255,0.1);
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 2px 8px var(--shadow-md);
     }
     .dash-action-card.highlight {
-      border-color: #007bff;
-      background: #f0f7ff;
+      border-color: var(--accent);
+      background: var(--accent-bg-alt);
     }
     .dash-action-card.highlight:hover {
-      background: #007bff;
+      background: var(--accent);
       color: white;
     }
     .dash-action-card.highlight:hover .chat-icon {
@@ -320,47 +329,82 @@ import { CategorySummary } from '../../models/expense.model';
     .dash-action-icon {
       width: 48px;
       height: 48px;
-      background: #e8f0fe;
+      background: var(--accent-bg);
       border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #007bff;
+      color: var(--accent);
+    }
+
+    /* Skeleton loading */
+    .skeleton-block {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 8px 0;
+    }
+    .skeleton-line {
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--border-light) 25%, var(--bg-card) 50%, var(--border-light) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+    .skeleton-lg {
+      height: 36px;
+      width: 60%;
+    }
+    .skeleton-sm {
+      height: 20px;
+      width: 40%;
+    }
+    .skeleton-md {
+      height: 24px;
+      width: 80%;
+    }
+    .skeleton-bar {
+      height: 10px;
+      width: 100%;
+      margin: 4px 0;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
     }
 
     /* Buttons */
     .btn-primary {
       display: inline-block;
       padding: 12px 28px;
-      background: #007bff;
+      background: var(--accent);
       color: white;
       text-decoration: none;
       border-radius: 8px;
       font-weight: 600;
       font-size: 0.95em;
-      border: 2px solid #007bff;
+      border: 2px solid var(--accent);
       cursor: pointer;
       transition: all 0.2s;
     }
     .btn-primary:hover {
-      background: #0056b3;
-      border-color: #0056b3;
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
     }
     .btn-outline {
       display: inline-block;
       padding: 12px 28px;
       background: transparent;
-      color: #007bff;
+      color: var(--accent);
       text-decoration: none;
       border-radius: 8px;
       font-weight: 600;
       font-size: 0.95em;
-      border: 2px solid #007bff;
+      border: 2px solid var(--accent);
       cursor: pointer;
       transition: all 0.2s;
     }
     .btn-outline:hover {
-      background: #007bff;
+      background: var(--accent);
       color: white;
     }
     .btn-lg {
@@ -383,23 +427,23 @@ import { CategorySummary } from '../../models/expense.model';
     .hero-icon {
       width: 100px;
       height: 100px;
-      background: #e8f0fe;
+      background: var(--accent-bg);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 24px;
-      color: #007bff;
+      color: var(--accent);
     }
     .hero h1 {
       font-size: 2.5em;
-      color: #1a1a1a;
+      color: var(--text-heading);
       margin-bottom: 16px;
       line-height: 1.2;
     }
     .hero-subtitle {
       font-size: 1.2em;
-      color: #666;
+      color: var(--text-secondary);
       max-width: 500px;
       margin: 0 auto 32px;
       line-height: 1.6;
@@ -420,28 +464,29 @@ import { CategorySummary } from '../../models/expense.model';
     .feature-card {
       text-align: center;
       padding: 32px 20px;
-      background: #f8f9fa;
+      background: var(--bg-card-alt);
       border-radius: 12px;
-      border: 1px solid #e9ecef;
+      border: 1px solid var(--border-light);
+      transition: background 0.3s, border-color 0.3s;
     }
     .feature-icon {
       width: 60px;
       height: 60px;
-      background: #e8f0fe;
+      background: var(--accent-bg);
       border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 16px;
-      color: #007bff;
+      color: var(--accent);
     }
     .feature-card h3 {
       font-size: 1.1em;
       margin-bottom: 8px;
-      color: #1a1a1a;
+      color: var(--text-heading);
     }
     .feature-card p {
-      color: #666;
+      color: var(--text-secondary);
       font-size: 0.9em;
       line-height: 1.5;
     }
@@ -454,7 +499,7 @@ import { CategorySummary } from '../../models/expense.model';
     .how-it-works h2 {
       font-size: 1.8em;
       margin-bottom: 32px;
-      color: #1a1a1a;
+      color: var(--text-heading);
     }
     .steps {
       display: flex;
@@ -473,7 +518,7 @@ import { CategorySummary } from '../../models/expense.model';
       justify-content: center;
       width: 44px;
       height: 44px;
-      background: #007bff;
+      background: var(--accent);
       color: white;
       border-radius: 50%;
       font-size: 1.2em;
@@ -481,12 +526,12 @@ import { CategorySummary } from '../../models/expense.model';
       margin-bottom: 12px;
     }
     .step p {
-      color: #444;
+      color: var(--text-secondary);
       font-size: 0.95em;
       line-height: 1.4;
     }
     .step-arrow {
-      color: #ccc;
+      color: var(--border-color);
       font-size: 1.5em;
       margin-top: -20px;
     }
@@ -495,22 +540,24 @@ import { CategorySummary } from '../../models/expense.model';
     .cta {
       text-align: center;
       padding: 48px 32px;
-      background: #f0f7ff;
+      background: var(--accent-bg-alt);
       border-radius: 16px;
       margin-bottom: 60px;
+      border: 1px solid var(--border-light);
+      transition: background 0.3s, border-color 0.3s;
     }
     .cta h2 {
       font-size: 1.6em;
-      color: #1a1a1a;
+      color: var(--text-heading);
       margin-bottom: 20px;
     }
     .share-section {
       margin-top: 32px;
       padding-top: 24px;
-      border-top: 1px solid #d0dff0;
+      border-top: 1px solid var(--border-color);
     }
     .share-label {
-      color: #666;
+      color: var(--text-secondary);
       font-size: 0.95em;
       margin-bottom: 16px;
     }
@@ -521,10 +568,10 @@ import { CategorySummary } from '../../models/expense.model';
       gap: 24px;
     }
     .qr-container {
-      background: white;
+      background: var(--bg-card);
       padding: 10px;
       border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 8px var(--shadow);
     }
     .qr-container img {
       display: block;

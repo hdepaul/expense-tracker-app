@@ -86,6 +86,9 @@ import { Category } from '../../models/expense.model';
       margin: 30px auto;
       padding: 20px;
     }
+    h2 {
+      color: var(--text-heading);
+    }
     .form-group {
       margin-bottom: 15px;
     }
@@ -93,13 +96,16 @@ import { Category } from '../../models/expense.model';
       display: block;
       margin-bottom: 5px;
       font-weight: 500;
+      color: var(--text-primary);
     }
     input, select, textarea {
       width: 100%;
       padding: 10px;
       box-sizing: border-box;
-      border: 1px solid #ddd;
+      border: 1px solid var(--border-color);
       border-radius: 4px;
+      background: var(--input-bg);
+      color: var(--text-primary);
     }
     .form-actions {
       display: flex;
@@ -109,14 +115,14 @@ import { Category } from '../../models/expense.model';
     .btn-save {
       flex: 1;
       padding: 12px;
-      background: #28a745;
+      background: var(--success);
       color: white;
       border: none;
       border-radius: 4px;
       cursor: pointer;
     }
     .btn-save:disabled {
-      background: #ccc;
+      background: var(--border-color);
     }
     .btn-cancel {
       flex: 1;
@@ -128,8 +134,8 @@ import { Category } from '../../models/expense.model';
       border-radius: 4px;
     }
     .error {
-      background: #f8d7da;
-      color: #721c24;
+      background: var(--error-bg);
+      color: var(--error-text);
       padding: 10px;
       margin-bottom: 15px;
       border-radius: 4px;

@@ -22,27 +22,28 @@ import { Component, input, output } from '@angular/core';
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.5);
+      background: var(--modal-bg);
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 1000;
     }
     .modal {
-      background: white;
+      background: var(--bg-card);
       padding: 25px;
       border-radius: 8px;
       min-width: 300px;
       max-width: 400px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 20px var(--shadow-md);
+      transition: background 0.3s;
     }
     .modal h3 {
       margin: 0 0 15px 0;
-      color: #333;
+      color: var(--text-heading);
     }
     .modal p {
       margin: 0 0 20px 0;
-      color: #666;
+      color: var(--text-secondary);
     }
     .modal-actions {
       display: flex;
@@ -59,7 +60,7 @@ import { Component, input, output } from '@angular/core';
     }
     .btn-confirm {
       padding: 10px 20px;
-      background: #dc3545;
+      background: var(--danger);
       color: white;
       border: none;
       border-radius: 4px;
@@ -69,7 +70,7 @@ import { Component, input, output } from '@angular/core';
       background: #5a6268;
     }
     .btn-confirm:hover {
-      background: #c82333;
+      background: var(--danger-hover);
     }
 
     /* Mobile styles */

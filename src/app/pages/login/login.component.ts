@@ -61,9 +61,12 @@ import { AuthService } from '../../services/auth.service';
       margin: 50px auto;
       padding: 20px;
     }
+    h2 {
+      color: var(--text-heading);
+    }
     .login-subtitle {
       text-align: center;
-      color: #666;
+      color: var(--text-secondary);
       font-size: 0.95em;
       margin-bottom: 24px;
       line-height: 1.5;
@@ -74,11 +77,16 @@ import { AuthService } from '../../services/auth.service';
     label {
       display: block;
       margin-bottom: 5px;
+      color: var(--text-primary);
     }
     input {
       width: 100%;
       padding: 8px;
       box-sizing: border-box;
+      background: var(--input-bg);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
     }
     .password-wrapper {
       position: relative;
@@ -93,7 +101,7 @@ import { AuthService } from '../../services/auth.service';
       transform: translateY(-50%);
       background: none;
       border: none;
-      color: #999;
+      color: var(--text-muted);
       cursor: pointer;
       padding: 4px;
       display: flex;
@@ -101,22 +109,23 @@ import { AuthService } from '../../services/auth.service';
       width: auto;
     }
     .btn-eye:hover {
-      color: #333;
+      color: var(--text-primary);
     }
     button[type="submit"] {
       width: 100%;
       padding: 10px;
-      background: #007bff;
+      background: var(--accent);
       color: white;
       border: none;
       cursor: pointer;
+      border-radius: 4px;
     }
     button[type="submit"]:disabled {
-      background: #ccc;
+      background: var(--border-color);
     }
     .error {
-      background: #f8d7da;
-      color: #721c24;
+      background: var(--error-bg);
+      color: var(--error-text);
       padding: 10px;
       margin-bottom: 15px;
       border-radius: 4px;
@@ -124,6 +133,7 @@ import { AuthService } from '../../services/auth.service';
     p {
       text-align: center;
       margin-top: 20px;
+      color: var(--text-primary);
     }
 
     /* Mobile styles */
@@ -131,9 +141,9 @@ import { AuthService } from '../../services/auth.service';
       .login-container {
         margin: 20px 15px;
         padding: 20px;
-        background: white;
+        background: var(--bg-card);
         border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 8px var(--shadow-md);
       }
       h2 {
         text-align: center;
@@ -142,8 +152,6 @@ import { AuthService } from '../../services/auth.service';
       input {
         padding: 12px;
         font-size: 16px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
       }
       button {
         padding: 14px;

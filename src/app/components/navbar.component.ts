@@ -37,11 +37,20 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
           </div>
         }
 
-        <button (click)="shareApp()" class="btn-share" [title]="'home.share' | translate">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-          @if (showCopied()) { <span class="copied-tooltip">{{ 'home.copied' | translate }}</span> }
-        </button>
-        <button (click)="toggleLang()" class="btn-lang">{{ currentLang() }}</button>
+        <div class="nav-toolbar">
+          <button (click)="shareApp()" class="btn-share" [title]="'home.share' | translate">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            @if (showCopied()) { <span class="copied-tooltip">{{ 'home.copied' | translate }}</span> }
+          </button>
+          <button (click)="toggleTheme()" class="btn-theme" [title]="isDark() ? ('nav.lightMode' | translate) : ('nav.darkMode' | translate)">
+            @if (isDark()) {
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            } @else {
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            }
+          </button>
+          <button (click)="toggleLang()" class="btn-lang">{{ currentLang() }}</button>
+        </div>
       </div>
     </nav>
   `,
@@ -51,9 +60,10 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       align-items: center;
       flex-wrap: wrap;
       padding: 15px 30px;
-      background: #343a40;
+      background: var(--bg-nav);
       color: white;
       position: relative;
+      transition: background 0.3s;
     }
     .brand {
       font-size: 1.3em;
@@ -98,7 +108,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       gap: 20px;
     }
     .nav-links a {
-      color: #ccc;
+      color: var(--nav-link);
       text-decoration: none;
       transition: color 0.2s;
     }
@@ -112,25 +122,30 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       margin-left: 30px;
     }
     .user-name {
-      color: #adb5bd;
+      color: var(--nav-text);
     }
     .btn-logout {
       padding: 8px 16px;
-      background: #dc3545;
+      background: var(--danger);
       color: white;
       border: none;
       border-radius: 4px;
       cursor: pointer;
     }
     .btn-logout:hover {
-      background: #c82333;
+      background: var(--danger-hover);
+    }
+    .nav-toolbar {
+      display: flex;
+      align-items: center;
+      margin-left: 15px;
+      gap: 8px;
     }
     .btn-share {
-      margin-left: 15px;
       padding: 6px 10px;
       background: transparent;
-      color: #adb5bd;
-      border: 1px solid #adb5bd;
+      color: var(--nav-text);
+      border: 1px solid var(--nav-text);
       border-radius: 4px;
       cursor: pointer;
       display: flex;
@@ -148,19 +163,34 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       bottom: -30px;
       left: 50%;
       transform: translateX(-50%);
-      background: #22c55e;
+      background: var(--success);
       color: white;
       padding: 4px 10px;
       border-radius: 4px;
       font-size: 0.75em;
       white-space: nowrap;
     }
+    .btn-theme {
+      padding: 6px 10px;
+      background: transparent;
+      color: var(--nav-text);
+      border: 1px solid var(--nav-text);
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .btn-theme:hover {
+      color: white;
+      border-color: white;
+    }
     .btn-lang {
-      margin-left: 10px;
       padding: 6px 12px;
       background: transparent;
-      color: #adb5bd;
-      border: 1px solid #adb5bd;
+      color: var(--nav-text);
+      border: 1px solid var(--nav-text);
       border-radius: 4px;
       cursor: pointer;
       font-size: 0.85em;
@@ -197,7 +227,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       }
       .nav-links a {
         padding: 12px 0;
-        border-bottom: 1px solid #495057;
+        border-bottom: 1px solid var(--nav-border);
       }
       .user-menu {
         margin-left: 0;
@@ -205,7 +235,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
         align-items: stretch;
         gap: 10px;
         padding-top: 10px;
-        border-top: 1px solid #495057;
+        border-top: 1px solid var(--nav-border);
       }
       .user-name {
         text-align: center;
@@ -213,16 +243,14 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
       .btn-logout {
         width: 100%;
       }
-      .btn-share {
+      .nav-toolbar {
         margin-left: 0;
         margin-top: 10px;
-        width: 100%;
         justify-content: center;
       }
-      .btn-lang {
-        margin-left: 0;
-        margin-top: 10px;
-        width: 100%;
+      .btn-share, .btn-theme, .btn-lang {
+        flex: 1;
+        justify-content: center;
       }
     }
   `]
@@ -234,6 +262,17 @@ export class NavbarComponent {
 
   menuOpen = signal(false);
   showCopied = signal(false);
+  isDark = signal(false);
+
+  constructor() {
+    // Apply saved theme on load
+    const saved = localStorage.getItem('theme');
+    if (saved === 'dark') {
+      this.isDark.set(true);
+      document.documentElement.setAttribute('data-theme', 'dark');
+      this.updateThemeColor('#0f3460');
+    }
+  }
 
   currentLang(): string {
     return this.translate.currentLang || 'en';
@@ -242,6 +281,27 @@ export class NavbarComponent {
   toggleLang(): void {
     const newLang = this.currentLang() === 'en' ? 'es' : 'en';
     this.translate.use(newLang);
+  }
+
+  toggleTheme(): void {
+    const dark = !this.isDark();
+    this.isDark.set(dark);
+    if (dark) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+      this.updateThemeColor('#0f3460');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'light');
+      this.updateThemeColor('#343a40');
+    }
+  }
+
+  private updateThemeColor(color: string): void {
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+      meta.setAttribute('content', color);
+    }
   }
 
   toggleMenu(): void {
