@@ -13,7 +13,17 @@ import { Expense, CategorySummary, ChatMessage } from '../../models/expense.mode
   standalone: true,
   imports: [RouterLink, DatePipe, CurrencyPipe, FormsModule, TranslateModule],
   template: `
-    <div class="expenses-container">
+    <div class="expenses-container"
+      (touchstart)="onContainerTouchStart($event)"
+      (touchmove)="onContainerTouchMove($event)"
+      (touchend)="onContainerTouchEnd()">
+
+      <!-- Pull to refresh indicator -->
+      <div class="pull-indicator" [style.height.px]="pullDistance()" [class.visible]="pullDistance() > 0" [class.refreshing]="isRefreshing()">
+        <svg class="pull-icon" [class.spin]="isRefreshing()" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+        </svg>
+      </div>
 
       <!-- AI Mini-Chat -->
       <div class="ai-chat">
@@ -90,7 +100,20 @@ import { Expense, CategorySummary, ChatMessage } from '../../models/expense.mode
       </div>
 
       @if (loading()) {
-        <p>{{ 'expenses.loading' | translate }}</p>
+        <div class="expense-list">
+          @for (i of [1,2,3]; track i) {
+            <div class="expense-card skeleton-card">
+              <div class="expense-card-inner">
+                <div class="skeleton-info">
+                  <div class="skeleton-line skeleton-title"></div>
+                  <div class="skeleton-line skeleton-date"></div>
+                  <div class="skeleton-line skeleton-chip"></div>
+                </div>
+                <div class="skeleton-line skeleton-amount"></div>
+              </div>
+            </div>
+          }
+        </div>
       }
 
       @if (!loading() && expenses().length === 0) {
@@ -611,6 +634,38 @@ import { Expense, CategorySummary, ChatMessage } from '../../models/expense.mode
       color: var(--text-secondary);
     }
 
+    /* Skeleton loaders */
+    .skeleton-card {
+      animation: none !important;
+    }
+    .skeleton-info { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .skeleton-line { border-radius: 4px; background: linear-gradient(90deg, var(--border-light, var(--border-color)) 25%, var(--bg-card) 50%, var(--border-light, var(--border-color)) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    .skeleton-title { height: 20px; width: 55%; }
+    .skeleton-date { height: 14px; width: 35%; }
+    .skeleton-chip { height: 18px; width: 25%; border-radius: 12px; }
+    .skeleton-amount { height: 28px; width: 80px; flex-shrink: 0; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* Pull to refresh */
+    .pull-indicator {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: height 0.2s;
+    }
+    .pull-indicator.visible {
+      display: flex;
+    }
+    .pull-icon {
+      color: var(--text-muted);
+      transition: transform 0.2s;
+    }
+    .pull-icon.spin {
+      animation: pullSpin 0.8s linear infinite;
+    }
+    @keyframes pullSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
     .fab {
       display: none;
     }
@@ -767,8 +822,15 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked, OnDestroy
   private touchStartY = 0;
   currentSwipeX = 0;
   isSwiping = false;
-  private swipeDirection: 'horizontal' | 'vertical' | null = null;
+  swipeDirection: 'horizontal' | 'vertical' | null = null;
   private readonly SWIPE_THRESHOLD = 80;
+
+  // Pull to refresh
+  isPulling = signal(false);
+  isRefreshing = signal(false);
+  pullDistance = signal(0);
+  private pullStartY = 0;
+  private readonly PULL_THRESHOLD = 70;
 
   // Voice input
   speechSupported = 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
@@ -1113,5 +1175,41 @@ export class ExpenseListComponent implements OnInit, AfterViewChecked, OnDestroy
     event.stopPropagation();
     this.closeSwipe();
     this.delete(expense);
+  }
+
+  // Pull to refresh
+  onContainerTouchStart(event: TouchEvent): void {
+    if (this.isRefreshing()) return;
+    this.pullStartY = event.touches[0].clientY;
+  }
+
+  onContainerTouchMove(event: TouchEvent): void {
+    if (this.isRefreshing() || this.swipeDirection === 'horizontal') return;
+    if (window.scrollY > 10) return;
+
+    const deltaY = event.touches[0].clientY - this.pullStartY;
+    if (deltaY > 0) {
+      this.pullDistance.set(Math.min(deltaY * 0.4, this.PULL_THRESHOLD + 20));
+    }
+  }
+
+  onContainerTouchEnd(): void {
+    if (this.isRefreshing()) return;
+
+    if (this.pullDistance() >= this.PULL_THRESHOLD) {
+      this.isRefreshing.set(true);
+      this.pullDistance.set(50);
+      this.loadExpenses();
+      // Reset after load completes (loadExpenses sets loading to false)
+      const check = setInterval(() => {
+        if (!this.loading()) {
+          this.isRefreshing.set(false);
+          this.pullDistance.set(0);
+          clearInterval(check);
+        }
+      }, 100);
+    } else {
+      this.pullDistance.set(0);
+    }
   }
 }

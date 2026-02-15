@@ -2,11 +2,12 @@ import { Component, signal, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './components/navbar.component';
 import { ToastComponent } from './components/toast.component';
+import { OnboardingComponent } from './components/onboarding.component';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NavbarComponent, ToastComponent],
+  imports: [RouterOutlet, NavbarComponent, ToastComponent, OnboardingComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

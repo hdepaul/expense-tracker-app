@@ -12,7 +12,8 @@
     "logout": "Logout",
     "admin": "Admin",
     "darkMode": "Dark mode",
-    "lightMode": "Light mode"
+    "lightMode": "Light mode",
+    "install": "Install app"
   },
   "home": {
     "welcome": "Hi",
@@ -171,5 +172,16 @@
     "Nafta": "Gas",
     "Gym": "Gym",
     "Other": "Other"
+  },
+  "onboarding": {
+    "step1Title": "Type or dictate your expenses",
+    "step1Desc": "Tell the AI what you spent by text or voice and it records it for you. No forms needed.",
+    "step2Title": "Track with reports",
+    "step2Desc": "Charts by category to understand where your money goes each month.",
+    "step3Title": "You're all set!",
+    "step3Desc": "You can start recording your expenses now. Try typing something in the chat!",
+    "next": "Next",
+    "start": "Get started",
+    "skip": "Skip"
   }
 }

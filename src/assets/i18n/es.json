@@ -12,7 +12,8 @@
     "logout": "Salir",
     "admin": "Admin",
     "darkMode": "Modo oscuro",
-    "lightMode": "Modo claro"
+    "lightMode": "Modo claro",
+    "install": "Instalar app"
   },
   "home": {
     "welcome": "Hola",
@@ -171,5 +172,16 @@
     "Nafta": "Nafta",
     "Gym": "Gimnasio",
     "Other": "Otros"
+  },
+  "onboarding": {
+    "step1Title": "Escribí o dictá tus gastos",
+    "step1Desc": "Decile a la IA qué gastaste por texto o voz y lo registra por vos. Sin formularios.",
+    "step2Title": "Controlá con reportes",
+    "step2Desc": "Gráficos por categoría para entender en qué se te va la plata cada mes.",
+    "step3Title": "¡Todo listo!",
+    "step3Desc": "Ya podés empezar a registrar tus gastos. ¡Probá escribir algo en el chat!",
+    "next": "Siguiente",
+    "start": "Empezar",
+    "skip": "Omitir"
   }
 }
