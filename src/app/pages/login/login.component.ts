@@ -166,7 +166,7 @@ export class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  email = '';
+  email = localStorage.getItem('lastEmail') || '';
   password = '';
   loading = signal(false);
   error = signal('');
@@ -179,6 +179,7 @@ export class LoginComponent {
     this.authService.login({ email: this.email, password: this.password })
       .subscribe({
         next: () => {
+          localStorage.setItem('lastEmail', this.email);
           this.router.navigate(['/']);
         },
         error: (err) => {
