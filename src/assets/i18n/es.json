@@ -195,6 +195,15 @@
     "Delivery": "PedidosYa, Rappi, delivery de comida",
     "Other": "Otros gastos varios"
   },
+  "privacy": {
+    "title": "Tu información está protegida",
+    "subtitle": "Antes de empezar, queremos que sepas cómo cuidamos tus datos personales.",
+    "point1": "Tu información se almacena de forma segura y encriptada.",
+    "point2": "No compartimos tus datos con terceros bajo ningún concepto.",
+    "point3": "Solo vos podés ver tus gastos e información personal.",
+    "point4": "Podés eliminar tu cuenta y todos tus datos en cualquier momento.",
+    "accept": "Entendido"
+  },
   "onboarding": {
     "step1Title": "Escribí o dictá tus gastos",
     "step1Desc": "Decile a la IA qué gastaste por texto o voz y lo registra por vos. Sin formularios.",
