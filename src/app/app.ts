@@ -3,11 +3,12 @@ import { RouterOutlet } from '@angular/router';
 import { NavbarComponent } from './components/navbar.component';
 import { ToastComponent } from './components/toast.component';
 import { OnboardingComponent } from './components/onboarding.component';
+import { PrivacyModalComponent } from './components/privacy-modal.component';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NavbarComponent, ToastComponent, OnboardingComponent],
+  imports: [RouterOutlet, NavbarComponent, ToastComponent, OnboardingComponent, PrivacyModalComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

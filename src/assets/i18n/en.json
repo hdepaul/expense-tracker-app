@@ -195,6 +195,15 @@
     "Delivery": "Food delivery services",
     "Other": "Miscellaneous expenses"
   },
+  "privacy": {
+    "title": "Your information is protected",
+    "subtitle": "Before you start, we want you to know how we take care of your personal data.",
+    "point1": "Your information is stored securely and encrypted.",
+    "point2": "We do not share your data with third parties under any circumstances.",
+    "point3": "Only you can see your expenses and personal information.",
+    "point4": "You can delete your account and all your data at any time.",
+    "accept": "Got it"
+  },
   "onboarding": {
     "step1Title": "Type or dictate your expenses",
     "step1Desc": "Tell the AI what you spent by text or voice and it records it for you. No forms needed.",
